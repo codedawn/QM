@@ -15,6 +15,8 @@ namespace QM
         private ApplicationState state;
         private ILog log;
         private string serverId;
+        //最大连接数
+        public int maxConnectCount;
 
         public Application()
         {

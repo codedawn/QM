@@ -1,17 +1,10 @@
-﻿
-namespace QM
-{
-    class Program
-    {
-        public static void Main(string[] args)
-        {
-            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
-            while (true) { }
-        }
+﻿using QM.Tests;
 
-        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            Console.WriteLine("");
-        }
+public class Program
+{
+    public static void Main()
+    {
+        SocketServerTest socketServerTest = new SocketServerTest();
+        socketServerTest.Run();
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using QM.Log;
+using QM.Network;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -13,11 +15,15 @@ namespace QM.Component
     public class Connector : IComponent
     {
         private Application application;
-        private Socket socket;
+        private ISocket socket;
+        private ConnectionService connectionService;
+        private ILog log;
+        private IMsgSchedule schedule;
 
         public Connector(Application application)
         {
             this.application = application;
+            this.connectionService = new ConnectionService();
         }
 
         public void Start()
@@ -27,6 +33,35 @@ namespace QM.Component
 
         public void AfterStart()
         {
+            StartListen();
+        }
+
+        private void StartListen()
+        {
+            socket.Start();
+            socket.onMessage += OnMessage;
+        }
+
+        private void Connection(Socket socket)
+        {
+            var totalConn = connectionService.getConnectionCount();
+            if (totalConn > application.maxConnectCount)
+            {
+                log.Warn($"连接数达到了{totalConn},最大连接数配置为{application.maxConnectCount},所以断开当前连接");
+                socket.Close();
+                return;
+            }
+
+        }
+
+        private void OnMessage(IMessage message)
+        {
+        }
+
+        private void Response(string message)
+        {
+           // schedule.Send(
+           // bytes);
         }
 
         public void Stop()
