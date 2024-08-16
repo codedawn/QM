@@ -1,12 +1,7 @@
-﻿using QM.Log;
+﻿using QM.Component;
+using QM.Log;
 using QM.Network;
 using QM.Utils;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QM
 {
@@ -18,14 +13,32 @@ namespace QM
         private string serverId;
         public readonly string serverType;
 
-        public int maxConnectCount;
+        public int maxConnectCount = 10000;
         public SessionManager sessionManager;
 
-        public Application()
+        private Application()
         {
             components = new List<IComponent>();
-            state = ApplicationState.Init;
             sessionManager = new SessionManager();
+            log = new ConsoleLog();
+
+            Init();
+        }
+
+        private void Init()
+        {
+            components.Add(new ConnectorComp(this));
+            components.Add(new ServerComp(this));
+            components.Add(new RpcForwardComp(this));
+            components.Add(new LoadBalanceComp(this));
+            components.Add(new ZookDiscoverComp(this));
+            state = ApplicationState.Init;
+        }
+
+        public static Application CreatApplication()
+        {
+            Application application = new Application();
+            return application;
         }
 
         public void Start()

@@ -8,5 +8,7 @@ namespace QM.Network
 {
     public interface IResponse : IMessage
     {
+        public long Id { get; set; }
+        public int Code { get; set; }
     }
 }

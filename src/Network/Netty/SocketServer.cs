@@ -47,7 +47,6 @@ namespace QM.Network
 
         public void OnMessage(IMessage message, IChannel channel)
         {
-            Console.WriteLine(message.ToString());
             IConnection connection = channel.GetAttribute(_connectionKey).Get();
             onMessage?.Invoke(message, connection);
         }
@@ -72,8 +71,8 @@ namespace QM.Network
 
             _bootstrapChannel = _bootstrap.BindAsync(_port).Result;
             Console.WriteLine("服务器启动成功");
-            Console.ReadLine();
-            await _bootstrapChannel?.CloseAsync();
+            //Console.ReadLine();
+            //await _bootstrapChannel?.CloseAsync();
         }
 
         public async void Close()

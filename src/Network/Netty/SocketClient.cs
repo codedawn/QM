@@ -31,7 +31,7 @@ namespace QM.Network
                 }));
 
             IChannel channel = bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 29999)).Result;
-            await channel.CloseAsync();
+            //await channel.CloseAsync();
         }
     }
 }

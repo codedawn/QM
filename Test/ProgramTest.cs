@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QM.Network;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,10 @@ namespace Test
     {
         public static void Main(string[] args)
         {
-            QMProtocolTest.Run();
+            // QMProtocolTest.Run();
+            ApplicationTest.Run();
+            //RpcTest.Run();
+            //ZookeeperServiceTest.Run();
         }
     }
 }
