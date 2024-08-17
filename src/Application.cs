@@ -1,9 +1,4 @@
-﻿using QM.Component;
-using QM.Log;
-using QM.Network;
-using QM.Utils;
-
-namespace QM
+﻿namespace QM
 {
     public class Application
     {

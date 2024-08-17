@@ -1,8 +1,4 @@
-﻿using QM.Log;
-using QM.Network;
-using QM.Service;
-
-namespace QM.Component
+﻿namespace QM
 {
     /**
      * connector组件是socket的一个上层封装，处理socket事件（连接，断开，接受、发送消息，调度其他组件维护连接信息）
@@ -54,9 +50,7 @@ namespace QM.Component
                 return;
             }
             _connectionManager.Add(connection.Address, connection);
-            Session session = new Session();
-            session.sid = connection.Cid;
-            session.connection = connection;
+            Session session = new Session(connection.Cid, connection, TimeUtils.GetUnixTimestampMilliseconds());
             application.sessionManager.Add(session.sid, session);
         }
 

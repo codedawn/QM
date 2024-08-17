@@ -1,6 +1,4 @@
-﻿using QM.Network;
-
-namespace QM.Handle
+﻿namespace QM
 {
     public interface IMHandler
     {

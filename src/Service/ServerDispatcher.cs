@@ -1,10 +1,6 @@
-﻿using QM;
-using QM.Component;
-using QM.Network;
-using Src.Attribute;
-using System.Reflection;
+﻿using System.Reflection;
 
-namespace QM.Service
+namespace QM
 {
     public class ServerDispatcher
     {

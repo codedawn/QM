@@ -1,8 +1,7 @@
 ﻿using DotNetty.Buffers;
 using MessagePack;
-using QM.Log;
 
-namespace QM.Network
+namespace QM
 {
     /// <summary>
     /// 协议结构：

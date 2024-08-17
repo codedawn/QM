@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QM.Utils
+namespace QM
 {
     public interface IPool
     {

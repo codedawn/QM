@@ -1,8 +1,6 @@
-﻿using QM.Network;
-using QM.Rpc;
-using System.Net;
+﻿using System.Net;
 
-namespace QM.Component
+namespace QM
 {
     public class RpcForwardComp : Component
     {

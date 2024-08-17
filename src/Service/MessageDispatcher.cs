@@ -1,8 +1,4 @@
-﻿using QM.Component;
-using QM.Handle;
-using QM.Network;
-
-namespace QM.Service
+﻿namespace QM
 {
     public class MessageDispatcher
     {
@@ -15,28 +11,28 @@ namespace QM.Service
             _rpcForward = _application.GetComponent<RpcForwardComp>();
         }
 
-        public IResponse Dispatch(IRequest request, Session session, RouteInfo routeInfo)
+        public IResponse Dispatch(IMessage message, Session session, RouteInfo routeInfo)
         {
             //当前服务器处理
             if(_application.serverType == routeInfo.ServerType)
             {
-                return DoHandle(request, session);
+                return DoHandle(message, session);
             }
             //转发
             else
             {
-                return DoForward(request, session, routeInfo);
+                return DoForward(message, session, routeInfo);
             }
         }
 
-        public IResponse DoHandle(IRequest request, Session session)
+        public IResponse DoHandle(IMessage message, Session session)
         {
-            return MessageHandleDispather.Instance.Handle(request, session);
+            return MessageHandleDispather.Instance.Handle(message, session);
         }
 
-        public IResponse DoForward(IRequest request, Session session, RouteInfo routeInfo)
+        public IResponse DoForward(IMessage message, Session session, RouteInfo routeInfo)
         {
-            return _rpcForward.Forward(request, session, routeInfo);
+            return _rpcForward.Forward(message, session, routeInfo);
         }
     }
 }

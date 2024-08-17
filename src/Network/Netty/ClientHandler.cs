@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QM.Network
+namespace QM
 {
     public class ClientHandler : ChannelHandlerAdapter
     {
@@ -16,10 +16,12 @@ namespace QM.Network
         public override void ChannelActive(IChannelHandlerContext context)
         {
             User user = new User() { Id = 10214214, Name = "liu", Email = "wgjieo@gmail.com" };
+            Heatbeat heatbeat = new Heatbeat();
             stopwatch.Start();
             for (int i = 0; i < num; i++)
             {
                 context.Channel.WriteAndFlushAsync(user);
+                context.Channel.WriteAndFlushAsync(heatbeat);
             }
         }
 

@@ -1,7 +1,4 @@
-﻿using QM.Component;
-using QM.Service;
-
-namespace QM.Component
+﻿namespace QM
 {
     public abstract class Component : IComponent
     {

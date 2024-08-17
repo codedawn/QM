@@ -1,7 +1,7 @@
 ﻿using System.Formats.Asn1;
 using MessagePack;
 
-namespace QM.Network
+namespace QM
 {
     public interface IRequest : IMessage
     {

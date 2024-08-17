@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QM.Component
+namespace QM
 {
     public class LoadBalanceComp : Component
     {

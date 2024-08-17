@@ -1,5 +1,4 @@
-﻿using QM.Service;
-using QM.Util;
+﻿using QM;
 
 namespace Test
 {

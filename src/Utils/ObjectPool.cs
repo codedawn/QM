@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QM.Utils
+namespace QM
 {
     /// <summary>
     /// 线程安全

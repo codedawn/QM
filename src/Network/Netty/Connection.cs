@@ -2,7 +2,7 @@
 
 using DotNetty.Transport.Channels;
 
-namespace QM.Network
+namespace QM
 {
     public class Connection : IConnection
     {

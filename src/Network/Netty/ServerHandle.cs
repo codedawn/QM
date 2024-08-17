@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QM.Network
+namespace QM
 {
     public class ServerHandle : ChannelHandlerAdapter
     {

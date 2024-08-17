@@ -1,12 +1,4 @@
-﻿using QM.Network;
-using src.Handle;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace QM.Handle
+﻿namespace QM
 {
     public abstract class MessageHandler<Request, Response> : IMHandler where Request : IRequest where Response : IResponse
     {   

@@ -1,10 +1,4 @@
-﻿using QM.Log;
-using QM.Network;
-using QM.Service;
-using Src.Network;
-using static System.Net.Mime.MediaTypeNames;
-
-namespace QM.Component
+﻿namespace QM
 {
     public class ServerComp : Component
     {
@@ -25,6 +19,7 @@ namespace QM.Component
         {
             _serverDispatcher = new ServerDispatcher(_application);
             _messageDispatcher = new MessageDispatcher(_application);
+            chainFilters.Add(new HeartBeatFilter());
             base.Start();
         }
 
@@ -50,7 +45,6 @@ namespace QM.Component
                 return;
             }
 
-            IRequest request = (IRequest)message;
             IResponse response = null;
             bool isFilter = false;
             bool isCrashError = false;
@@ -58,7 +52,7 @@ namespace QM.Component
             {
                 foreach (IChainFilter filter in chainFilters)
                 {
-                    if (!filter.Before(request))
+                    if (!filter.Before(message, session))
                     {
                         isFilter = true;
                         break;
@@ -68,7 +62,10 @@ namespace QM.Component
             catch (Exception e)
             {
                 isCrashError = true;
-                response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
+                if (message is IRequest request)
+                {
+                    response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
+                }
                 log.Error(e.ToString());
             }
 
@@ -85,19 +82,22 @@ namespace QM.Component
 
             try
             {
-                response = _messageDispatcher.Dispatch(request, session, routeInfo);
+                response = _messageDispatcher.Dispatch(message, session, routeInfo);
             }
             catch (Exception e)
             {
                 isCrashError = true;
-                response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
+                if (message is IRequest request)
+                {
+                    response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
+                }
                 log.Error(e.ToString());
             }
             SendReponse(response, session);
 
             foreach (IChainFilter filter in chainFilters)
             {
-                filter.After(request, response);
+                filter.After(message, response, session);
             }
         }
 

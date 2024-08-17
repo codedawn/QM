@@ -1,8 +1,7 @@
 ﻿using Coldairarrow.DotNettyRPC;
 using DotNettyRPC;
 using DotNettyRPC.Helper;
-using QM.Network;
-using QM.Rpc;
+using QM;
 using System.Diagnostics;
 
 namespace Test

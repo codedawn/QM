@@ -1,13 +1,11 @@
-﻿using QM.Network;
-
-namespace QM.Rpc
+﻿namespace QM
 {
     public class Remote : IRemote
     {
         public IResponse Forward(IMessage message, NetSession netSession)
         {
 
-            Session session = new Session() { sid = netSession.sid };
+            Session session = new Session(netSession.sid, null, 0);
 
             RemoteConnection remoteConnection = new RemoteConnection();
             session.connection = remoteConnection;

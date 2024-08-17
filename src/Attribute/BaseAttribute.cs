@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace QM
+﻿namespace QM
 {
-    public class BaseAttribute : Attribute
+    public class BaseAttribute : System.Attribute
     {
     }
 }

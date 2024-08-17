@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace QM.Network
+namespace QM
 {
     /// <summary>
     /// 消息编码

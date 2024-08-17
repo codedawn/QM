@@ -1,11 +1,9 @@
 ﻿using Coldairarrow.DotNettyRPC;
-using DotNettyRPC;
 using DotNettyRPC.Helper;
-using QM.Network;
 using System.Diagnostics;
 using System.Net;
 
-namespace QM.Rpc
+namespace QM
 {
     public class RpcClient
     {

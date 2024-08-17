@@ -1,7 +1,6 @@
 ﻿using MessagePack;
-using Src.Attribute;
 
-namespace QM.Network
+namespace QM
 {
     [MessageDispatch("server")]
     [MessageIndex(1)]

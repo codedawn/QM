@@ -1,6 +1,4 @@
-﻿using QM.Network;
-
-namespace QM.Rpc
+﻿namespace QM
 {
     public interface IRemote
     {

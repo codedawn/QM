@@ -1,11 +1,4 @@
-﻿using QM.Network;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Test
+﻿namespace Test
 {
     public class ProgramTest
     {
@@ -15,6 +8,7 @@ namespace Test
             ApplicationTest.Run();
             //RpcTest.Run();
             //ZookeeperServiceTest.Run();
+            //EventSystemTest.Run();
         }
     }
 }

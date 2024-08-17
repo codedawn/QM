@@ -1,7 +1,7 @@
 ﻿using Coldairarrow.DotNettyRPC;
 using DotNettyRPC.Helper;
 
-namespace QM.Rpc
+namespace QM
 {
     public class RpcServer
     {

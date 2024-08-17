@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QM.Service
+namespace QM
 {
     /**
      * 维护连接数等信息

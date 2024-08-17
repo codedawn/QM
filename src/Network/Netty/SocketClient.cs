@@ -8,7 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QM.Network
+namespace QM
 {
     public class SocketClient
     {

@@ -1,12 +1,4 @@
-﻿using QM.Network;
-using Src.Network;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Src.Extension
+﻿namespace QM
 {
     public static class ResponseExtension
     {

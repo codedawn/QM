@@ -11,7 +11,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QM.Network
+namespace QM
 {
     public class SocketServer : ISocket
     {
