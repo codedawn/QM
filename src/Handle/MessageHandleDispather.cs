@@ -20,7 +20,7 @@
             }
         }
 
-        public IResponse Handle(IMessage message, Session session)
+        public IResponse Handle(IMessage message, ISession session)
         {
             handlers.TryGetValue(message.GetType(), out IMHandler handler);
             if (handler != null)

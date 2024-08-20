@@ -12,7 +12,7 @@
             return typeof(Response);
         }
 
-        public IResponse Handle(IMessage message, Session session)
+        public IResponse Handle(IMessage message, ISession session)
         {
             if (message is not Request request)
             {
@@ -33,6 +33,6 @@
             return response;
         }
 
-        protected abstract void Run(Request request, Response response, Session session);
+        protected abstract void Run(Request request, Response response, ISession session);
     }
 }

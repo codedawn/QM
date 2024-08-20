@@ -9,6 +9,8 @@
             //RpcTest.Run();
             //ZookeeperServiceTest.Run();
             //EventSystemTest.Run();
+            //Console.ReadLine();
+           // AsyncHelperTest.Run();
         }
     }
 }

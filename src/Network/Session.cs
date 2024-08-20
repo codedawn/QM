@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace QM
 {
-    public class Session
+    public class Session : ISession
     {
-        public string sid;
-        public IConnection connection;
+        public string Sid { get; set; }
+        public IConnection Connection { get; set; }
         public long lastAccessTime;
 
         public Session(string sid, IConnection connection, long lastAccessTime)
         {
-            this.sid = sid;
-            this.connection = connection;
+            this.Sid = sid;
+            this.Connection = connection;
             this.lastAccessTime = lastAccessTime;
         }
     }

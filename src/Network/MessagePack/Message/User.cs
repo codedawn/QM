@@ -2,7 +2,7 @@
 
 namespace QM
 {
-    [MessageDispatch("server")]
+    [MessageDispatch(Application.Server)]
     [MessageIndex(1)]
     [MessagePackObject]
     public class User : IRequest

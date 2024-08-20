@@ -6,6 +6,7 @@ namespace QM
 {
     public class ZookeeperService
     {
+        private ILog _log = new ConsoleLog();
         private static readonly string _address = "127.0.0.1:2181";
         private static readonly int _sessionTimeout = 5000;
         private static readonly string _servicePath = "/service";
@@ -31,23 +32,25 @@ namespace QM
             await _zookeeper.getChildrenAsync(_servicePath, true);
         }
 
-        public void Restart()
+        public async Task Restart()
         {
-            AsyncHelper.RunSync(() => { return StartAsync(); });
+            await StartAsync();
         }
 
         /// <summary>
-        /// 
+        /// node格式必须为/servertype:servername:ip:port
         /// </summary>
-        /// <param name="node">/servertype:ip:port</param>
+        /// <param name="node">/servertype:servername:ip:port</param>
         /// <param name="idEndPoint">ip:port</param>
         /// <returns></returns>
         public async Task RegisterAsync(string node, string idEndPoint)
         {
+            _log.Info("RegisterAsync");
             byte[] bytes = Encoding.UTF8.GetBytes(idEndPoint);
             string path = _servicePath + node;
             if (await _zookeeper.existsAsync(path) == null)
             {
+                _log.Info($"RegisterAsync ManagedThreadId :{Thread.CurrentThread.ManagedThreadId}");
                 await _zookeeper.createAsync(path, bytes, Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
             }
         }
@@ -63,6 +66,8 @@ namespace QM
 
         public async Task<List<string>> GetServersAsync()
         {
+            _log.Info($"GetServersAsync ManagedThreadId :{Thread.CurrentThread.ManagedThreadId}");
+            //如果外层使用AsyncHelper转同步这里会死锁
             ChildrenResult childrenResult = await _zookeeper.getChildrenAsync(_servicePath, true);
             List<string> servers = new List<string>();
             foreach (var child in childrenResult.Children)
@@ -97,7 +102,7 @@ namespace QM
 
             if (state == Event.KeeperState.Expired)
             {
-                _service.Restart();
+               await _service.Restart();
             }
 
             if (type != Event.EventType.None)

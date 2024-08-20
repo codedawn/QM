@@ -20,7 +20,6 @@ namespace QM
         private MultithreadEventLoopGroup _bossGroup;
         private MultithreadEventLoopGroup _workerGroup;
         private IChannel _bootstrapChannel;
-        private int _port = 29999;
         private AttributeKey<IConnection> _connectionKey = AttributeKey<IConnection>.NewInstance("Connection");
 
         public event Action<IMessage, IConnection> onMessage;
@@ -51,7 +50,7 @@ namespace QM
             onMessage?.Invoke(message, connection);
         }
 
-        public async void RunServer()
+        public void RunServer()
         {
             IProtocol protocol = new QMProtocol();
             _bossGroup = new MultithreadEventLoopGroup();
@@ -69,7 +68,7 @@ namespace QM
                     pipeline.AddLast(new ServerHandle(this));
                 }));
 
-            _bootstrapChannel = _bootstrap.BindAsync(_port).Result;
+            _bootstrapChannel = _bootstrap.BindAsync(Application.current.port).Result;
             Console.WriteLine("服务器启动成功");
             //Console.ReadLine();
             //await _bootstrapChannel?.CloseAsync();

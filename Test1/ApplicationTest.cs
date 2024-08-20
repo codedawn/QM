@@ -6,15 +6,14 @@ namespace Test
     {
         public static void Run()
         {
-            Test1();
-            //Test2();
+            Test2();
         }
 
         private static void Test1()
         {
             Task.Run(() =>
             {
-                Task.Delay(1500).Wait();
+                Task.Delay(1000).Wait();
                 SocketClient socketClient = new SocketClient();
                 socketClient.RunClient();
             });

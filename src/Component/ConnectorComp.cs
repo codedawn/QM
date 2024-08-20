@@ -11,6 +11,7 @@
         private ILog log;
         private IMsgSchedule schedule;
         private ServerComp _server;
+        private SessionComp _sessionComp;
 
         public ConnectorComp(Application application)
         {
@@ -23,6 +24,7 @@
         public override void Start()
         {
             _server = application.GetComponent<ServerComp>();
+            _sessionComp = application.GetComponent<SessionComp>();
             base.Start();
         }
 
@@ -51,7 +53,7 @@
             }
             _connectionManager.Add(connection.Address, connection);
             Session session = new Session(connection.Cid, connection, TimeUtils.GetUnixTimestampMilliseconds());
-            application.sessionManager.Add(session.sid, session);
+            _sessionComp.Add(session.Sid, session);
         }
 
         private void OnDisConnect(IConnection connection)
@@ -61,19 +63,13 @@
 
         private void OnMessage(IMessage message, IConnection connection)
         {
-            Session session = application.sessionManager.Get(connection.Cid);
+            Session session = (Session)_sessionComp.Get(connection.Cid);
             HandleMessage(message, session);
         }
 
         private void HandleMessage(IMessage message, Session session)
         {
             _server.GlobalHandle(message, session);
-        }
-
-        private void Response(string message)
-        {
-           // schedule.Send(
-           // bytes);
         }
 
         public override void Stop()

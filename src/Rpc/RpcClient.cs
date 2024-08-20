@@ -28,11 +28,16 @@ namespace QM
             // Console.WriteLine("Forward:" + message.ToString());
         }
 
-        public IResponse Forward(IMessage message, Session session, IPEndPoint iPEndPoint)
+        public IResponse Forward(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
         {
             IRemote client = RPCClientFactory.GetClient<IRemote>(iPEndPoint.Address.ToString(), iPEndPoint.Port);
-            NetSession netSession = NetSession.Create(session);
             return client.Forward(message, netSession);
+        }
+
+        public void Push(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
+        {
+            IRemote client = RPCClientFactory.GetClient<IRemote>(iPEndPoint.Address.ToString(), iPEndPoint.Port);
+            client.Push(message, netSession);
         }
     }
 }

@@ -3,15 +3,15 @@
     public class MessageDispatcher
     {
         private Application _application;
-        private RpcForwardComp _rpcForward;
+        private RpcComp _rpcForward;
 
         public MessageDispatcher(Application application)
         {
             _application = application;
-            _rpcForward = _application.GetComponent<RpcForwardComp>();
+            _rpcForward = _application.GetComponent<RpcComp>();
         }
 
-        public IResponse Dispatch(IMessage message, Session session, RouteInfo routeInfo)
+        public IResponse Dispatch(IMessage message, ISession session, RouteInfo routeInfo)
         {
             //当前服务器处理
             if(_application.serverType == routeInfo.ServerType)
@@ -25,12 +25,12 @@
             }
         }
 
-        public IResponse DoHandle(IMessage message, Session session)
+        public IResponse DoHandle(IMessage message, ISession session)
         {
             return MessageHandleDispather.Instance.Handle(message, session);
         }
 
-        public IResponse DoForward(IMessage message, Session session, RouteInfo routeInfo)
+        public IResponse DoForward(IMessage message, ISession session, RouteInfo routeInfo)
         {
             return _rpcForward.Forward(message, session, routeInfo);
         }

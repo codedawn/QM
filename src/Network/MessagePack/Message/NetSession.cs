@@ -15,14 +15,28 @@ namespace QM
         [Key(0)]
         public string sid;
 
-        public static NetSession Create(Session session)
+        [Key(1)]
+        public string serverId;
+
+        public static NetSession Create(Session session, string serverId)
         {
             NetSession netSession = new NetSession()
             {
-                sid = session.sid
+                sid = session.Sid,
+                serverId = serverId
             };
 
             return netSession;
+        }
+
+        public NetSession(string sid, string serverId)
+        {
+            this.sid = sid;
+            this.serverId = serverId;
+        }
+
+        public NetSession()
+        {
         }
     }
 }

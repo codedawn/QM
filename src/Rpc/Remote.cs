@@ -4,32 +4,22 @@
     {
         public IResponse Forward(IMessage message, NetSession netSession)
         {
-
-            Session session = new Session(netSession.sid, null, 0);
-
             RemoteConnection remoteConnection = new RemoteConnection();
-            session.connection = remoteConnection;
-            //DoSomething(message, session);
-            remoteConnection.Send(new UserResponse() { Id = 42142132131, Name = "fkewfo" });
+            RemoteSession remoteSession = new RemoteSession(netSession.sid, remoteConnection, netSession.serverId);
+
+            Application.current.GetComponent<ServerComp>().GlobalHandle(message, remoteSession);
+            //remoteConnection.Send(new UserResponse() { Id = 42142132131, Name = "fkewfo" });
             return (IResponse)remoteConnection.response;
         }
-    }
 
-    public class RemoteConnection : IConnection
-    {
-        public IMessage response;
-        public string Address => throw new NotImplementedException();
-
-        public string Cid { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public void Close()
+        public void Push(IMessage message, NetSession netSession)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Send(IMessage message)
-        {
-            response = message;
+            ISession session = Application.current.GetComponent<SessionComp>().Get(netSession.sid);
+            if (session == null)
+            {
+                return;
+            }
+            session.Connection.Send(message);
         }
     }
 }

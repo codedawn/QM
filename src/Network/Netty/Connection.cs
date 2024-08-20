@@ -34,6 +34,7 @@ namespace QM
 
         public void Close()
         {
+            Console.WriteLine("close");
             _channel.CloseAsync();
         }
     }

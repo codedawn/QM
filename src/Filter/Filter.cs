@@ -1,12 +1,12 @@
 ﻿namespace QM
 {
-    public class Filter : IChainFilter
+    public class Filter : IFilter
     {
-        public virtual void After(IMessage request, IResponse response, Session session)
+        public virtual void After(IMessage request, IResponse response, ISession session)
         {
         }
 
-        public virtual bool Before(IMessage request, Session session)
+        public virtual bool Before(IMessage request, ISession session)
         {
             return true;
         }

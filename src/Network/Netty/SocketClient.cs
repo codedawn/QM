@@ -12,7 +12,7 @@ namespace QM
 {
     public class SocketClient
     {
-        public async void RunClient()
+        public void RunClient()
         {
             IProtocol protocol = new QMProtocol();
             var group = new MultithreadEventLoopGroup(1);
@@ -30,7 +30,7 @@ namespace QM
                     pipeline.AddLast(new ClientHandler());
                 }));
 
-            IChannel channel = bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 29999)).Result;
+            IChannel channel = bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Application.current.port)).Result;
             //await channel.CloseAsync();
         }
     }

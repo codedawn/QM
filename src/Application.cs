@@ -2,19 +2,31 @@
 {
     public class Application
     {
+        public const string Connector = "Connector";
+        public const string Server = "Server";
+
         private List<IComponent> components;
         private ApplicationState state;
         private ILog log;
-        private string serverId;
+
+        public readonly bool isConnector;
+        public readonly string serverId;
         public readonly string serverType;
-
+        public readonly int port;
+        public readonly int rpcPort;
         public int maxConnectCount = 10000;
-        public SessionManager sessionManager;
 
-        private Application()
+        public static Application current;
+
+        private Application(string serverId, string serverType, int port)
         {
+            this.serverId = serverId;
+            this.serverType = serverType;
+            this.port = port;
+            this.rpcPort = port + 1;
+
             components = new List<IComponent>();
-            sessionManager = new SessionManager();
+            isConnector = serverType == Connector;
             log = new ConsoleLog();
 
             Init();
@@ -22,18 +34,30 @@
 
         private void Init()
         {
-            components.Add(new ConnectorComp(this));
-            components.Add(new ServerComp(this));
-            components.Add(new RpcForwardComp(this));
-            components.Add(new LoadBalanceComp(this));
-            components.Add(new ZookDiscoverComp(this));
+            if (isConnector)
+            {
+                components.Add(new ConnectorComp(this));
+                components.Add(new ServerComp(this));
+                components.Add(new RpcComp(this));
+                components.Add(new RouteComp(this));
+                components.Add(new ZookDiscoverComp(this));
+                components.Add(new SessionComp(this));
+            }
+            else
+            {
+                components.Add(new ServerComp(this));
+                components.Add(new RpcComp(this));
+                components.Add(new RouteComp(this));
+                components.Add(new ZookDiscoverComp(this));
+            }
+           
             state = ApplicationState.Init;
         }
 
-        public static Application CreatApplication()
+        public static Application CreateApplication(string serverId, string serverType, int port)
         {
-            Application application = new Application();
-            return application;
+            current = new Application(serverId, serverType, port);
+            return current;
         }
 
         public void Start()

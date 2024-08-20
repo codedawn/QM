@@ -9,11 +9,11 @@ namespace QM
 {
     public class SessionManager
     {
-        private ConcurrentDictionary<string, Session> _sessions = new ConcurrentDictionary<string, Session>();
+        private ConcurrentDictionary<string, ISession> _sessions = new ConcurrentDictionary<string, ISession>();
 
-        public void Add(string sid, Session session)
+        public void Add(string sid, ISession session)
         {
-            if (_sessions.TryGetValue(sid, out Session exist))
+            if (_sessions.TryGetValue(sid, out ISession exist))
             {
                 _sessions.TryUpdate(sid, session, exist);
             }
@@ -23,9 +23,9 @@ namespace QM
             }
         }
 
-        public Session Get(string sid)
+        public ISession Get(string sid)
         {
-            if(_sessions.TryGetValue(sid, out Session session))
+            if(_sessions.TryGetValue(sid, out ISession session))
             {
                 return session;
             }
@@ -34,7 +34,7 @@ namespace QM
 
         public void Remove(string sid)
         {
-            if ( _sessions.TryRemove(sid, out Session session))
+            if ( _sessions.TryRemove(sid, out ISession session))
             {
                 //todo
             }

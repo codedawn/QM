@@ -1,8 +1,10 @@
-﻿namespace QM
+﻿using System.Reflection;
+
+namespace QM
 {
     public class ServerComp : Component
     {
-        private List<IChainFilter> chainFilters;
+        private List<IFilter> chainFilters;
         private ILog log;
         private MessageDispatcher _messageDispatcher;
         private Application _application;
@@ -11,15 +13,35 @@
         public ServerComp(Application application)
         {
             _application = application;
-            chainFilters = new List<IChainFilter>();
+            chainFilters = new List<IFilter>();
             log = new ConsoleLog();
+            InitFliter();
+        }
+
+        private void InitFliter()
+        {
+            foreach (Type type in CodeType.Instance.GetTypes(typeof(FilterAttribute)))
+            {
+                FilterAttribute filterAttribute = type.GetCustomAttribute<FilterAttribute>();
+                if (filterAttribute != null)
+                {
+                    List<string> includes = new List<string>(filterAttribute.includeServer.Split(','));
+                    List<string> excludes = new List<string>(filterAttribute.excludeServer.Split(','));
+
+                    string serverType = _application.serverType;
+                    if (excludes.IndexOf(FilterAttribute.All) == -1 && excludes.IndexOf(serverType) == -1 && includes.IndexOf(serverType) != -1)
+                    {
+                        IFilter filter = (IFilter)Activator.CreateInstance(type);
+                        chainFilters.Add(filter);
+                    }
+                }
+            }
         }
 
         public override void Start()
         {
             _serverDispatcher = new ServerDispatcher(_application);
             _messageDispatcher = new MessageDispatcher(_application);
-            chainFilters.Add(new HeartBeatFilter());
             base.Start();
         }
 
@@ -29,7 +51,7 @@
         }
 
 
-        public void GlobalHandle(IMessage message, Session session)
+        public void GlobalHandle(IMessage message, ISession session)
         {
             if (state != ComponentState.AfterStart)
             {
@@ -50,7 +72,7 @@
             bool isCrashError = false;
             try
             {
-                foreach (IChainFilter filter in chainFilters)
+                foreach (IFilter filter in chainFilters)
                 {
                     if (!filter.Before(message, session))
                     {
@@ -67,6 +89,9 @@
                     response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
                 }
                 log.Error(e.ToString());
+#if DEBUG
+                throw;
+#endif
             }
 
             //before可以拦截消息，不会继续传播
@@ -92,10 +117,13 @@
                     response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
                 }
                 log.Error(e.ToString());
+#if DEBUG
+                throw;
+#endif
             }
             SendReponse(response, session);
 
-            foreach (IChainFilter filter in chainFilters)
+            foreach (IFilter filter in chainFilters)
             {
                 filter.After(message, response, session);
             }
@@ -119,11 +147,11 @@
             return routeInfo;
         }
 
-        public void SendReponse(IResponse response, Session session)
+        public void SendReponse(IResponse response, ISession session)
         {
             if (response != null)
             {
-                session.connection.Send(response);
+                session.Connection.Send(response);
             }
         }
 

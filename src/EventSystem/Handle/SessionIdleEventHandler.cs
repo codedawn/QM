@@ -7,7 +7,8 @@ namespace QM
         public override void Run(SessionIdleEvent e)
         {
             Console.WriteLine(e);
-            //e.session.connection.Close();
+            e.session.Connection.Close();
+
         }
     }
 }
