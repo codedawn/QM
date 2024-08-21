@@ -1,30 +1,50 @@
-﻿using System.Collections.Concurrent;
+﻿using DotNettyRPC.Helper;
+using System;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
 namespace Coldairarrow.DotNettyRPC
 {
     class ClientWait
     {
-        private ConcurrentDictionary<string, ClientObj> _waits { get; set; } = new ConcurrentDictionary<string, ClientObj>();
-        public void Start(string id)
+        private ConcurrentDictionary<long, ClientObj> _waits { get; set; } = new ConcurrentDictionary<long, ClientObj>();
+
+        public void Start(long id)
         {
-            _waits[id] = new ClientObj();
+            ClientObj clientObj = new ClientObj();
+            _waits[id] = clientObj;
         }
-        public void Set(string id, string responseStriong)
+
+        public void Set(byte[] bytes)
         {
-            var theObj = _waits[id];
-            theObj.ResponseString = responseStriong;
-            theObj.WaitHandler.Set();
+            ResponseModel responseModel = MessagePackUtil.Deserialize<ResponseModel>(bytes);
+            ClientObj clientObj = _waits[responseModel.Id];
+            if (clientObj == null) return;
+
+            object result = null;
+            if (responseModel.Success)
+            {
+                if (responseModel.DataIndex == -1)
+                {
+                    result = null;
+                }
+                else
+                {
+                    result = MessagePackUtil.Deserialize(MessageOpcodeHelper.GetType(responseModel.DataIndex), responseModel.Data);
+                }
+            }
+            else
+            {
+                throw new Exception($"RPC服务器异常，错误消息：{responseModel.Msg}");
+            }
+            clientObj.tcs.SetResult(result);
+            _waits.TryRemove(responseModel.Id, out ClientObj value);
         }
-        public ClientObj Wait(string id)
+
+        public Task<object> Get(long id)
         {
             var clientObj = _waits[id];
-            clientObj.WaitHandler.WaitOne();
-            Task.Run(() =>
-            {
-                _waits.TryRemove(id, out ClientObj value);
-            });
-            return clientObj;
+            return clientObj.tcs.Task;
         }
     }
 }

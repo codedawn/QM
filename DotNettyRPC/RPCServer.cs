@@ -7,6 +7,7 @@ using DotNettyRPC.Helper;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace Coldairarrow.DotNettyRPC
 {
@@ -47,55 +48,48 @@ namespace Coldairarrow.DotNettyRPC
         private Dictionary<string, Type> _serviceHandle { get; set; } = new Dictionary<string, Type>();
         ServerBootstrap _serverBootstrap { get; }
         IChannel _serverChannel { get; set; }
-        internal ResponseModel GetResponse(RequestModel request)
+        internal async Task<ResponseModel> GetResponse(RequestModel request)
         {
             ResponseModel response = new ResponseModel();
-
+            response.Id = request.Id;
             try
             {
                 var requestModel = request;
                 if (!_serviceHandle.ContainsKey(requestModel.ServiceName))
-                    throw new Exception("未找到该服务");
+                {
+                    throw new Exception($"RPC调用未找到该服务{requestModel.ServiceName}");
+                }
                 //todo 可以做缓存
                 var serviceType = _serviceHandle[requestModel.ServiceName];
                 var service = Activator.CreateInstance(serviceType);
                 var method = serviceType.GetMethod(requestModel.MethodName);
                 if (method == null)
-                    throw new Exception("未找到该方法");
-                List<short> generics = requestModel.Generics;
+                    throw new Exception($"RPC调用未找到该方法{requestModel.MethodName}");
                 List<short> paramterIndexs = requestModel.ParamterIndexs;
                 object[] paramters = requestModel.Paramters.ToArray();
-                var methodParamters = method.GetParameters();
-                for (int i = 0; i < methodParamters.Length; i++)
+                for (int i = 0; i < paramters.Length; i++)
                 {
-                    if (paramters[i].GetType() != methodParamters[i].ParameterType)
-                    {
-                        paramters[i] = paramters[i].ToJson().ToObject(MessageOpcodeHelper.GetType(paramterIndexs[i]));
-                    }
+                    Type type = MessageOpcodeHelper.GetType(paramterIndexs[i]);
+                    byte[] bytes = MessagePackUtil.Serialize(paramters[i]);
+                    paramters[i] = MessagePackUtil.Deserialize(type, bytes);
                 }
-                Type[] genericTypes = new Type[generics.Count];
-                for (int i = 0; i < generics.Count; i++)
+                object res = method.Invoke(service, paramters);
+                if (res is Task<object> task)
                 {
-                    //todo 可以考虑string
-                    genericTypes[i] = MessageOpcodeHelper.GetType(generics[i]);
+                    res = await task;
                 }
-                if (method.IsGenericMethod)
-                {
-                    method = method.MakeGenericMethod(genericTypes);
-                }
-                var res = method.Invoke(service, paramters);
 
                 response.Success = true;
                 if (res != null)
                 {
-                    response.DataIndex = (byte)MessageOpcodeHelper.GetIndex(res.GetType());
-                    response.Data = res.ToJson();
+                    response.DataIndex = (short)MessageOpcodeHelper.GetIndex(res.GetType());
+                    response.Data = MessagePackUtil.Serialize(res);
                 }
                 else
                 {
                     response.DataIndex = -1;
                 }
-                response.Msg = "请求成功";
+                //response.Msg = "";
             }
             catch (Exception ex)
             {

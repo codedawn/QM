@@ -21,7 +21,7 @@ namespace QM
             stopwatch.Start();
             for (int i = 0; i < 1000; i++)
             {
-                IResponse message = client.Forward(user, netSession);
+                //IResponse message = client.Forward(user, netSession);
             }
             stopwatch.Stop();
             Console.WriteLine($"执行了{stopwatch.ElapsedMilliseconds}ms");
@@ -31,7 +31,8 @@ namespace QM
         public IResponse Forward(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
         {
             IRemote client = RPCClientFactory.GetClient<IRemote>(iPEndPoint.Address.ToString(), iPEndPoint.Port);
-            return client.Forward(message, netSession);
+            //return client.Forward(message, netSession);
+            return null;
         }
 
         public void Push(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)

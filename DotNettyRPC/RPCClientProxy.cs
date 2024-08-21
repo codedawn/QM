@@ -8,15 +8,21 @@ using DotNettyRPC.Helper;
 using System;
 using System.Dynamic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Coldairarrow.DotNettyRPC
 {
-    class RPCClientProxy : DynamicObject
+    public class RPCClientProxy : DynamicObject
     {
-        static RPCClientProxy()
+        public RPCClientProxy(string serverIp, int port, Type serviceType)
         {
+            _ipEndPoint = new IPEndPoint(IPAddress.Parse(serverIp), port);
+            _serviceType = serviceType;
+            _serviceName = serviceType.Name;
             _bootstrap = new Bootstrap()
                 .Group(new MultithreadEventLoopGroup())
                 .Channel<TcpSocketChannel>()
@@ -30,72 +36,63 @@ namespace Coldairarrow.DotNettyRPC
                     pipeline.AddLast(new ClientHandler(_clientWait));
                 }));
         }
-        public string ServerIp { get; set; }
-        public int ServerPort { get; set; }
-        public string ServiceName { get; set; }
-        public Type ServiceType { get; set; }
-        static Bootstrap _bootstrap { get; }
-        static ClientWait _clientWait { get; } = new ClientWait();
+        private IPEndPoint _ipEndPoint;
+        private string _serviceName;
+        private Type _serviceType;
+        private Bootstrap _bootstrap { get; }
+        private ClientWait _clientWait { get; } = new ClientWait();
+        private long _idCount;
+        private IChannel client;
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
             try
             {
-                ResponseModel response = null;
-                IChannel client = null;
-                try
+                if (client == null || !(client.Open && client.Active && client.IsWritable))
                 {
-                    client = AsyncHelper.RunSync(() => _bootstrap.ConnectAsync($"{ServerIp}:{ServerPort}".ToIPEndPoint()));
+                    try
+                    {
+                        client = AsyncHelper.RunSync(() => _bootstrap.ConnectAsync(_ipEndPoint));
+                    }
+                    catch
+                    {
+                        throw new Exception("连接到RPC服务端失败");
+                    }
                 }
-                catch
-                {
-                    throw new Exception("连接到服务端失败!");
-                }
+
                 if (client != null)
                 {
                     //todo 可以改成await，加上超时机制
-                    _clientWait.Start(client.Id.AsShortText());
-                    Type[] typeArguments = Array.Empty<Type>();
-                    if (binder.GetType().GetProperty("TypeArguments") is PropertyInfo typeArgumentsProperty)
-                    {
-                        typeArguments = (Type[])typeArgumentsProperty.GetValue(binder);
-                    }
+                    long id = Interlocked.Increment(ref _idCount);
+                    _clientWait.Start(id);
                     RequestModel requestModel = new RequestModel
                     {
-                        ServiceName = ServiceName,
+                        Id = id,
+                        ServiceName = _serviceName,
                         MethodName = binder.Name,
-                        Generics = MessageOpcodeHelper.GetParameterIndexs(typeArguments),
                         ParamterIndexs = MessageOpcodeHelper.GetParameterIndexs(args),
                         Paramters = args.ToList()
                     };
-                    var sendBuffer = Unpooled.WrappedBuffer(requestModel.ToJson().ToBytes(Encoding.UTF8));
-
+                    byte[] bytes = MessagePackUtil.Serialize(requestModel);
+                    IByteBuffer sendBuffer = Unpooled.WrappedBuffer(bytes);
+                    result = CallRpc(id);
                     client.WriteAndFlushAsync(sendBuffer);
-                    var responseStr = _clientWait.Wait(client.Id.AsShortText()).ResponseString;
-                    response = responseStr.ToObject<ResponseModel>();
-                }
-                else
-                {
-                    throw new Exception("连接到服务端失败!");
-                }
-
-                if (response == null)
-                    throw new Exception("服务器超时未响应");
-                else if (response.Success)
-                {
-                    if (response.DataIndex == -1)
-                        result = null;
-                    else
-                        result = response.Data.ToObject(MessageOpcodeHelper.GetType(response.DataIndex));
 
                     return true;
                 }
                 else
-                    throw new Exception($"服务器异常，错误消息：{response.Msg}");
+                {
+                    throw new Exception("连接到服务端失败!");
+                }
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
+        }
+
+        private object CallRpc(long id)
+        {
+            return _clientWait.Get(id);
         }
     }
 }

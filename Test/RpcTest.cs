@@ -1,6 +1,7 @@
 ﻿using Coldairarrow.DotNettyRPC;
 using DotNettyRPC;
 using DotNettyRPC.Helper;
+using Dynamitey;
 using QM;
 using System.Diagnostics;
 
@@ -12,6 +13,7 @@ namespace Test
         {
             //Test1();
             DotNettyRPCTest();
+            Console.ReadLine();
         }
         private class InnerMessageOpcode : IRpcMessageOpcode
         {
@@ -28,7 +30,7 @@ namespace Test
 
         private static void Test1()
         {
-           
+
             MessageOpcodeHelper.SetMessageOpcode(new InnerMessageOpcode());
             for (int i = 0; i < 10; i++)
             {
@@ -43,34 +45,36 @@ namespace Test
             server.Start();
         }
 
-        private static void DotNettyRPCTest()
+        private static async void DotNettyRPCTest()
         {
             int threadCount = 1;
             int port = 39999;
-            int count = 10000;
+            int count = 1000000;
             int errorCount = 0;
             MessageOpcodeHelper.SetMessageOpcode(new InnerMessageOpcode());
             RPCServer rPCServer = new RPCServer(port);
             rPCServer.RegisterService<IRemote, Remote>();
             rPCServer.Start();
-            IRemote client = null;
-            client = RPCClientFactory.GetClient<IRemote>("127.0.0.1", port);
             User user = new User() { Id = 582105291, Name = "fjeiw", Email = "25809219@gmai.com" };
             NetSession netSession = new NetSession();
-            client.Forward(user, netSession);
+            IRemote remote = RPCClientFactory.GetClient<IRemote>("127.0.0.1", port);
+            //remote.Forward(user, netSession);
+            //object result = await client.CallAync(typeof(IRemote).Name, "Forward", new object[] { user, netSession });
             Stopwatch watch = new Stopwatch();
             List<Task> tasks = new List<Task>();
             watch.Start();
             for (int i = 0; i < threadCount; i++)
             {
-                tasks.Add(Task.Run(() =>
+                tasks.Add(Task.Run(async () =>
                 {
                     for (int j = 0; j < count; j++)
                     {
                         //string msg = string.Empty;
                         try
                         {
-                            client.Forward(user, netSession);
+                            await remote.Test(user, netSession);
+                            //UserResponse userResponse = (UserResponse)await client.Forward(user, netSession);
+                            //Console.WriteLine(userResponse);
                             //msg = client.SayHello("Hello");
                             //Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff")}:{msg}");
                         }
@@ -86,6 +90,7 @@ namespace Test
             watch.Stop();
             Console.WriteLine($"并发数:{threadCount},运行:{count}次,每次耗时:{(double)watch.ElapsedMilliseconds / count}ms");
             Console.WriteLine($"错误次数：{errorCount}");
+            Console.ReadLine();
         }
     }
 }

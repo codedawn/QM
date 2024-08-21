@@ -1,4 +1,6 @@
-﻿using ImpromptuInterface;
+﻿using Dynamitey;
+using ImpromptuInterface;
+using System;
 using System.Collections.Concurrent;
 
 namespace Coldairarrow.DotNettyRPC
@@ -42,13 +44,7 @@ namespace Coldairarrow.DotNettyRPC
             }
             catch
             {
-                var clientProxy = new RPCClientProxy
-                {
-                    ServerIp = serverIp,
-                    ServerPort = port,
-                    ServiceType = typeof(T),
-                    ServiceName = serviceName
-                };
+                var clientProxy = new RPCClientProxy(serverIp, port, typeof(T));
                 service = clientProxy.ActLike<T>();
                 _services[key] = service;
             }

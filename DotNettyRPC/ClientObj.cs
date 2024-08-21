@@ -1,10 +1,17 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Coldairarrow.DotNettyRPC
 {
-    class ClientObj
+    public class ClientObj
     {
-        public AutoResetEvent WaitHandler { get; set; } = new AutoResetEvent(false);
-        public string ResponseString { get; set; }
+        public TaskCompletionSource<object> tcs { get; set; }
+
+        public ClientObj()
+        {
+            this.tcs = new TaskCompletionSource<object>();
+        }
     }
+
 }

@@ -14,8 +14,10 @@ namespace Coldairarrow.DotNettyRPC
         }
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-            var buffer = message as IByteBuffer;
-            _clientWait.Set(context.Channel.Id.AsShortText(), buffer.ToString(Encoding.UTF8));
+            IByteBuffer buffer = message as IByteBuffer;
+            byte[] bytes = new byte[buffer.ReadableBytes];
+            buffer.ReadBytes(bytes);
+            _clientWait.Set(bytes);
         }
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
 
