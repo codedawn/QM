@@ -13,7 +13,7 @@ namespace QM
 
         public void Start(int port)
         {
-            IRemote client = RPCClientFactory.GetClient<IRemote>("127.0.0.1", port);
+            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>("127.0.0.1", port);
             User user = new User() { Id = 582105291, Name = "fjeiw", Email = "25809219@gmai.com" };
             NetSession netSession = new NetSession();
             Stopwatch stopwatch = new Stopwatch();
@@ -29,14 +29,14 @@ namespace QM
 
         public IResponse Forward(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
         {
-            IRemote client = RPCClientFactory.GetClient<IRemote>(iPEndPoint.Address.ToString(), iPEndPoint.Port);
+            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port);
             //return client.Forward(message, netSession);
             return null;
         }
 
         public void Push(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
         {
-            IRemote client = RPCClientFactory.GetClient<IRemote>(iPEndPoint.Address.ToString(), iPEndPoint.Port);
+            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port);
             client.Push(message, netSession);
         }
     }

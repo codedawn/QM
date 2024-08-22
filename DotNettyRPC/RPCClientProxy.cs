@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace DotNettyRPC
 {
-    public class RPCClientProxy : DynamicObject
+    public class RPCClientProxy<IResult> : DynamicObject
     {
         public RPCClientProxy(string serverIp, int port, Type serviceType, int timeout)
         {
@@ -19,7 +19,7 @@ namespace DotNettyRPC
             _serviceType = serviceType;
             _serviceName = serviceType.Name;
             _timeout = timeout;
-            _clientWait = new ClientWait(_timeout);
+            _clientWait = new ClientWait<IResult>(_timeout);
             _bootstrap = new Bootstrap()
                 .Group(new MultithreadEventLoopGroup())
                 .Channel<TcpSocketChannel>()
@@ -38,7 +38,7 @@ namespace DotNettyRPC
         private string _serviceName;
         private Type _serviceType;
         private Bootstrap _bootstrap { get; }
-        private ClientWait _clientWait { get; }
+        private ClientWait<IResult> _clientWait { get; }
         private long _idCount;
         private IChannel client;
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)

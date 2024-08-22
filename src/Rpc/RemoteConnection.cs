@@ -9,7 +9,7 @@ namespace QM
 {
     public class RemoteConnection : IConnection
     {
-        public IMessage response;
+        public IResponse response;
         public string Address => throw new NotImplementedException();
 
         public string Cid { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -21,7 +21,7 @@ namespace QM
 
         public void Send(IMessage message)
         {
-            response = message;
+            response = (IResponse)message;
         }
     }
 }

@@ -7,11 +7,13 @@ namespace DotNettyRPC
 {
     class ClientHandler : ChannelHandlerAdapter
     {
-        private ClientWait _clientWait { get; }
-        public ClientHandler(ClientWait clientWait)
+        private IClientWait _clientWait { get; }
+
+        public ClientHandler(IClientWait clientWait)
         {
             _clientWait = clientWait;
         }
+
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
             IByteBuffer buffer = message as IByteBuffer;

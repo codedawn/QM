@@ -21,9 +21,9 @@ namespace DotNettyRPC
         /// <param name="port">远程服务端口</param>
         /// <param name="timeout">超时时间（ms）</param>
         /// <returns></returns>
-        public static T GetClient<T>(string serverIp, int port, int timeout = 2000) where T : class
+        public static T GetClient<T, IResult>(string serverIp, int port, int timeout = 2000) where T : class
         {
-            return GetClient<T>(serverIp, port, typeof(T).Name, timeout);
+            return GetClient<T, IResult>(serverIp, port, typeof(T).Name, timeout);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace DotNettyRPC
         /// <param name="port">远程服务端口</param>
         /// <param name="serviceName">服务名</param>
         /// <returns></returns>
-        public static T GetClient<T>(string serverIp, int port, string serviceName, int timeout) where T : class
+        public static T GetClient<T, IResult>(string serverIp, int port, string serviceName, int timeout) where T : class
         {
             T service = null;
             string key = $"{serviceName}-{serverIp}-{port}";
@@ -45,7 +45,7 @@ namespace DotNettyRPC
             }
             catch
             {
-                var clientProxy = new RPCClientProxy(serverIp, port, typeof(T), timeout);
+                var clientProxy = new RPCClientProxy<IResult>(serverIp, port, typeof(T), timeout);
                 service = clientProxy.ActLike<T>();
                 _services[key] = service;
             }

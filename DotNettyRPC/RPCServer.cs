@@ -71,9 +71,15 @@ namespace DotNettyRPC
                     paramters[i] = MessagePackUtil.Deserialize(type, bytes);
                 }
                 object res = method.Invoke(service, paramters);
-                if (res is Task<object> task)
+                if (res is Task task)
                 {
-                    res = await task;
+                    await task;
+                    var resultProperty = task.GetType().GetProperty("Result");
+
+                    if (resultProperty != null)
+                    {
+                        res = resultProperty.GetValue(task);
+                    }
                 }
 
                 response.Success = true;

@@ -20,8 +20,6 @@ namespace DotNettyRPC
             ResponseModel response = await _rpcServer.GetResponse(requestModel);
             byte[] sendMsg = MessagePackUtil.Serialize(response);
             context.WriteAndFlushAsync(Unpooled.WrappedBuffer(sendMsg));
-
-            //context.CloseAsync();
         }
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)

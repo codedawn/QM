@@ -10,11 +10,6 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <DocumentationFile>obj\Debug\netstandard2.0\DotNettyRPC.xml</DocumentationFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="DotNetty.Codecs" Version="0.7.6" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />

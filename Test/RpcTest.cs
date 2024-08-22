@@ -54,9 +54,7 @@ namespace Test
             rPCServer.Start();
             User user = new User() { Id = 582105291, Name = "fjeiw", Email = "25809219@gmai.com" };
             NetSession netSession = new NetSession();
-            IRemote remote = RPCClientFactory.GetClient<IRemote>("127.0.0.1", port);
-            //remote.Forward(user, netSession);
-            //object result = await client.CallAync(typeof(IRemote).Name, "Forward", new object[] { user, netSession });
+            IRemote remote = RPCClientFactory.GetClient<IRemote, IResponse>("127.0.0.1", port);
             Stopwatch watch = new Stopwatch();
             List<Task> tasks = new List<Task>();
             watch.Start();
@@ -66,19 +64,15 @@ namespace Test
                 {
                     for (int j = 0; j < count; j++)
                     {
-                        //string msg = string.Empty;
                         try
                         {
-                            await remote.Test(user, netSession);
-                            //UserResponse userResponse = (UserResponse)await client.Forward(user, netSession);
-                            //Console.WriteLine(userResponse);
-                            //msg = client.SayHello("Hello");
-                            //Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff")}:{msg}");
+                            IResponse response = await remote.Test(user, netSession);
+                            //Console.WriteLine(response.ToString());
                         }
                         catch (Exception ex)
                         {
                             errorCount++;
-                            //Console.WriteLine(ExceptionHelper.GetExceptionAllMsg(ex));
+                            throw;
                         }
                     }
                 }));
