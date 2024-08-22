@@ -1,15 +1,12 @@
-﻿using Coldairarrow.Util;
-using DotNetty.Codecs;
+﻿using DotNetty.Codecs;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
-using DotNettyRPC.Helper;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace Coldairarrow.DotNettyRPC
+namespace DotNettyRPC
 {
     /// <summary>
     /// RPC服务端

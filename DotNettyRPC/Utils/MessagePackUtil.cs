@@ -1,7 +1,7 @@
 ﻿using MessagePack;
 using System;
 
-namespace Coldairarrow.DotNettyRPC
+namespace DotNettyRPC
 {
     public class MessagePackUtil
     {

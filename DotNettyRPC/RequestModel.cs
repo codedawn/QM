@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Coldairarrow.DotNettyRPC
+namespace DotNettyRPC
 {
     [MessagePackObject]
     public class RequestModel

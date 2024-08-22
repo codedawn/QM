@@ -3,13 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <Description>A RPC Framework Based On DotNetty</Description>
-    <Authors>Coldairarrow</Authors>
-    <Company>Coldairarrow</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <Copyright>Open Source</Copyright>
-    <PackageProjectUrl>https://github.com/Coldairarrow/DotNettyRPC</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Coldairarrow/DotNettyRPC</RepositoryUrl>
     <PackageReleaseNotes />
     <Version>1.6.1</Version>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

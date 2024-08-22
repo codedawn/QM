@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-namespace Coldairarrow.Util
+namespace DotNettyRPC
 {
     internal static partial class Extention
     {

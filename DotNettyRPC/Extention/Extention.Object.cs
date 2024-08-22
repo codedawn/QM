@@ -1,4 +1,4 @@
-﻿namespace Coldairarrow.Util
+﻿namespace DotNettyRPC
 {
     internal static partial class Extention
     {

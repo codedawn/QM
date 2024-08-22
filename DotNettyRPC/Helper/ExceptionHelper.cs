@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Coldairarrow.Util
+namespace DotNettyRPC
 {
     /// <summary>
     /// 异常处理帮助类

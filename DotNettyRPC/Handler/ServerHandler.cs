@@ -1,10 +1,8 @@
-﻿using Coldairarrow.Util;
-using DotNetty.Buffers;
+﻿using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using System;
-using System.Text;
 
-namespace Coldairarrow.DotNettyRPC
+namespace DotNettyRPC
 {
     class ServerHandler : ChannelHandlerAdapter
     {

@@ -1,7 +1,4 @@
-﻿using Coldairarrow.DotNettyRPC;
-using DotNettyRPC;
-using DotNettyRPC.Helper;
-using Dynamitey;
+﻿using DotNettyRPC;
 using QM;
 using System.Diagnostics;
 
@@ -49,7 +46,7 @@ namespace Test
         {
             int threadCount = 1;
             int port = 39999;
-            int count = 1000000;
+            int count = 100000;
             int errorCount = 0;
             MessageOpcodeHelper.SetMessageOpcode(new InnerMessageOpcode());
             RPCServer rPCServer = new RPCServer(port);

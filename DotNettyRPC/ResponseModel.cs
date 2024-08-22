@@ -1,6 +1,6 @@
 ﻿using MessagePack;
 
-namespace Coldairarrow.DotNettyRPC
+namespace DotNettyRPC
 {
     [MessagePackObject]
     public class ResponseModel

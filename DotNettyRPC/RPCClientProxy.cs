@@ -1,28 +1,25 @@
-﻿using Coldairarrow.Util;
-using DotNetty.Buffers;
+﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
-using DotNettyRPC.Helper;
 using System;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
-namespace Coldairarrow.DotNettyRPC
+namespace DotNettyRPC
 {
     public class RPCClientProxy : DynamicObject
     {
-        public RPCClientProxy(string serverIp, int port, Type serviceType)
+        public RPCClientProxy(string serverIp, int port, Type serviceType, int timeout)
         {
             _ipEndPoint = new IPEndPoint(IPAddress.Parse(serverIp), port);
             _serviceType = serviceType;
             _serviceName = serviceType.Name;
+            _timeout = timeout;
+            _clientWait = new ClientWait(_timeout);
             _bootstrap = new Bootstrap()
                 .Group(new MultithreadEventLoopGroup())
                 .Channel<TcpSocketChannel>()
@@ -36,11 +33,12 @@ namespace Coldairarrow.DotNettyRPC
                     pipeline.AddLast(new ClientHandler(_clientWait));
                 }));
         }
+        private int _timeout;
         private IPEndPoint _ipEndPoint;
         private string _serviceName;
         private Type _serviceType;
         private Bootstrap _bootstrap { get; }
-        private ClientWait _clientWait { get; } = new ClientWait();
+        private ClientWait _clientWait { get; }
         private long _idCount;
         private IChannel client;
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
@@ -61,7 +59,6 @@ namespace Coldairarrow.DotNettyRPC
 
                 if (client != null)
                 {
-                    //todo 可以改成await，加上超时机制
                     long id = Interlocked.Increment(ref _idCount);
                     _clientWait.Start(id);
                     RequestModel requestModel = new RequestModel

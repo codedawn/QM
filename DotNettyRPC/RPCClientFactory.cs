@@ -3,7 +3,7 @@ using ImpromptuInterface;
 using System;
 using System.Collections.Concurrent;
 
-namespace Coldairarrow.DotNettyRPC
+namespace DotNettyRPC
 {
     /// <summary>
     /// 客户端工厂
@@ -19,10 +19,11 @@ namespace Coldairarrow.DotNettyRPC
         /// <typeparam name="T">接口定义类型</typeparam>
         /// <param name="serverIp">远程服务IP</param>
         /// <param name="port">远程服务端口</param>
+        /// <param name="timeout">超时时间（ms）</param>
         /// <returns></returns>
-        public static T GetClient<T>(string serverIp, int port) where T : class
+        public static T GetClient<T>(string serverIp, int port, int timeout = 2000) where T : class
         {
-            return GetClient<T>(serverIp, port, typeof(T).Name);
+            return GetClient<T>(serverIp, port, typeof(T).Name, timeout);
         }
 
         /// <summary>
@@ -34,7 +35,7 @@ namespace Coldairarrow.DotNettyRPC
         /// <param name="port">远程服务端口</param>
         /// <param name="serviceName">服务名</param>
         /// <returns></returns>
-        public static T GetClient<T>(string serverIp, int port, string serviceName) where T : class
+        public static T GetClient<T>(string serverIp, int port, string serviceName, int timeout) where T : class
         {
             T service = null;
             string key = $"{serviceName}-{serverIp}-{port}";
@@ -44,7 +45,7 @@ namespace Coldairarrow.DotNettyRPC
             }
             catch
             {
-                var clientProxy = new RPCClientProxy(serverIp, port, typeof(T));
+                var clientProxy = new RPCClientProxy(serverIp, port, typeof(T), timeout);
                 service = clientProxy.ActLike<T>();
                 _services[key] = service;
             }
