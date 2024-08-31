@@ -34,14 +34,14 @@ namespace QM
             base.Stop();
         }
 
-        public IResponse Forward(IMessage message, ISession session, RouteInfo routeInfo)
+        public async Task<IResponse> ForwardToServer(IMessage message, ISession session, RouteInfo routeInfo)
         {
             IPEndPoint iPEndPoint = _routeComp.Route(routeInfo.ServerType);
             NetSession netSession = NetSession.Create((Session)session, Application.current.serverId);
-            return  _rpcClient.Forward(message, netSession, iPEndPoint);
+            return  await _rpcClient.Forward(message, netSession, iPEndPoint);
         }
 
-        public void Push(IMessage message, string serverId, string sid)
+        public async Task PushToConnector(IMessage message, string serverId, string sid)
         {
             IPEndPoint iPEndPoint = _routeComp.GetAddress(serverId);
             if (iPEndPoint == null)
@@ -50,7 +50,23 @@ namespace QM
                 return;
             }
             NetSession netSession = new NetSession(sid, Application.current.serverId);
-            _rpcClient.Push(message, netSession, iPEndPoint);
+            await _rpcClient.Push(message, netSession, iPEndPoint);
+        }
+
+        /// <summary>
+        /// 广播给所有session
+        /// </summary>
+        /// <param name="message"></param>
+        public async Task Broadcast(IMessage message)
+        {
+            List<IPEndPoint> iPEndPoints = _routeComp.GetAddresses(Application.Connector);
+            Task[] tasks = new Task[iPEndPoints.Count];
+            int i = 0;
+            foreach(IPEndPoint iPEndPoint in iPEndPoints)
+            {
+                tasks[i++] = _rpcClient.Broadcast(message, iPEndPoint); 
+            }
+            await Task.WhenAll(tasks);
         }
     }
 }

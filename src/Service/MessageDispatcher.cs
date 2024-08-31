@@ -11,28 +11,28 @@
             _rpcForward = _application.GetComponent<RpcComp>();
         }
 
-        public IResponse Dispatch(IMessage message, ISession session, RouteInfo routeInfo)
+        public async Task<IResponse> DispatchAsync(IMessage message, ISession session, RouteInfo routeInfo)
         {
             //当前服务器处理
             if(_application.serverType == routeInfo.ServerType)
             {
-                return DoHandle(message, session);
+                return await DoHandleAsync(message, session);
             }
             //转发
             else
             {
-                return DoForward(message, session, routeInfo);
+                return await DoForwardAsync(message, session, routeInfo);
             }
         }
 
-        public IResponse DoHandle(IMessage message, ISession session)
+        public async Task<IResponse> DoHandleAsync(IMessage message, ISession session)
         {
-            return MessageHandleDispather.Instance.Handle(message, session);
+            return await MessageHandleDispather.Instance.Handle(message, session);
         }
 
-        public IResponse DoForward(IMessage message, ISession session, RouteInfo routeInfo)
+        public async Task<IResponse> DoForwardAsync(IMessage message, ISession session, RouteInfo routeInfo)
         {
-            return _rpcForward.Forward(message, session, routeInfo);
+            return await _rpcForward.ForwardToServer(message, session, routeInfo);
         }
     }
 }

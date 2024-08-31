@@ -6,38 +6,28 @@ namespace QM
 {
     public class RpcClient
     {
+        private int _timeout = 10000;
         public RpcClient()
         {
             MessageOpcodeHelper.SetMessageOpcode(new RpcMessageOpcode());
         }
 
-        public void Start(int port)
+        public async Task<IResponse> Forward(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
         {
-            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>("127.0.0.1", port);
-            User user = new User() { Id = 582105291, Name = "fjeiw", Email = "25809219@gmai.com" };
-            NetSession netSession = new NetSession();
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            for (int i = 0; i < 1000; i++)
-            {
-                //IResponse message = client.Forward(user, netSession);
-            }
-            stopwatch.Stop();
-            Console.WriteLine($"执行了{stopwatch.ElapsedMilliseconds}ms");
-            // Console.WriteLine("Forward:" + message.ToString());
+            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port, _timeout);
+            return await client.Forward(message, netSession);
         }
 
-        public IResponse Forward(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
+        public async Task Push(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
         {
-            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port);
-            //return client.Forward(message, netSession);
-            return null;
+            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port, _timeout);
+            await client.Push(message, netSession);
         }
 
-        public void Push(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
+        public async Task Broadcast(IMessage message, IPEndPoint iPEndPoint)
         {
-            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port);
-            client.Push(message, netSession);
+            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port, _timeout);
+            await client.Broadcast(message);
         }
     }
 }

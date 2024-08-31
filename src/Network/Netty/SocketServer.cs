@@ -69,7 +69,7 @@ namespace QM
                 }));
 
             _bootstrapChannel = _bootstrap.BindAsync(Application.current.port).Result;
-            Console.WriteLine("服务器启动成功");
+            //Console.WriteLine("服务器启动成功");
             //Console.ReadLine();
             //await _bootstrapChannel?.CloseAsync();
         }

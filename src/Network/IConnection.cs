@@ -10,7 +10,7 @@ namespace QM
     {
         public string Address {  get;}
         public string Cid { get; set; }
-        public void Send(IMessage message);
-        public void Close();
+        public Task Send(IMessage message);
+        public Task Close();
     }
 }

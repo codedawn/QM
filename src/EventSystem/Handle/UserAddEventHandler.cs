@@ -9,10 +9,13 @@ namespace QM
     [EventHandler]
     public class UserAddEventHandler : EventHandler<UserAddEvent>
     {
-        public override void Run(UserAddEvent e)
+        public override async Task Run(UserAddEvent e)
         {
-            UserPush userPush = new UserPush() { Name = "useradd" };
-            Application.current.GetComponent<RpcComp>().Push(userPush, e.Session.serverId, e.Session.Sid);
+            UserPush userPush = new UserPush() { Name = "push" };
+            await Application.current.GetComponent<RpcComp>().PushToConnector(userPush, e.Session.serverId, e.Session.Sid);
+
+            UserPush userPush1 = new UserPush() { Name = "broadcast" };
+            await Application.current.GetComponent<RpcComp>().Broadcast(userPush1);
         }
     }
 }

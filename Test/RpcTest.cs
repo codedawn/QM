@@ -25,23 +25,6 @@ namespace Test
             }
         }
 
-        private static void Test1()
-        {
-
-            MessageOpcodeHelper.SetMessageOpcode(new InnerMessageOpcode());
-            for (int i = 0; i < 10; i++)
-            {
-                Task.Run(() =>
-                {
-                    RpcClient client = new RpcClient();
-                    client.Start(9999);
-                });
-            }
-
-            RpcServer server = new RpcServer();
-            server.Start();
-        }
-
         private static async void DotNettyRPCTest()
         {
             int threadCount = 1;

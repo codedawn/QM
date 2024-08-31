@@ -1,13 +1,15 @@
-﻿namespace QM
+﻿using System.Diagnostics;
+
+namespace QM
 {
     public class Application
     {
         public const string Connector = "Connector";
         public const string Server = "Server";
 
-        private List<IComponent> components;
-        private ApplicationState state;
-        private ILog log;
+        private List<IComponent> _components;
+        private ApplicationState _state;
+        private ILog _log;
 
         public readonly bool isConnector;
         public readonly string serverId;
@@ -25,33 +27,35 @@
             this.port = port;
             this.rpcPort = port + 1;
 
-            components = new List<IComponent>();
+            _components = new List<IComponent>();
             isConnector = serverType == Connector;
-            log = new ConsoleLog();
+            _log = new ConsoleLog();
+            _log.Info($"服务器{serverId}开始启动==================================");
 
             Init();
+
         }
 
         private void Init()
         {
             if (isConnector)
             {
-                components.Add(new ConnectorComp(this));
-                components.Add(new ServerComp(this));
-                components.Add(new RpcComp(this));
-                components.Add(new RouteComp(this));
-                components.Add(new ZookDiscoverComp(this));
-                components.Add(new SessionComp(this));
+                _components.Add(new ConnectorComp(this));
+                _components.Add(new ServerComp(this));
+                _components.Add(new RpcComp(this));
+                _components.Add(new RouteComp(this));
+                _components.Add(new ZookDiscoverComp(this));
+                _components.Add(new SessionComp(this));
             }
             else
             {
-                components.Add(new ServerComp(this));
-                components.Add(new RpcComp(this));
-                components.Add(new RouteComp(this));
-                components.Add(new ZookDiscoverComp(this));
+                _components.Add(new ServerComp(this));
+                _components.Add(new RpcComp(this));
+                _components.Add(new RouteComp(this));
+                _components.Add(new ZookDiscoverComp(this));
             }
            
-            state = ApplicationState.Init;
+            _state = ApplicationState.Init;
         }
 
         public static Application CreateApplication(string serverId, string serverType, int port)
@@ -62,60 +66,83 @@
 
         public void Start()
         {
-            var beginTime = TimeUtils.GetUnixTimestampMilliseconds();
-            if (state >= ApplicationState.Start)
+            var beginTime = Time.GetUnixTimestampMilliseconds();
+            if (_state >= ApplicationState.Start)
             {
-                log.Error("已经初始化");
+                _log.Error("已经初始化");
                 return;
             }
 
-            foreach (var component in components)
+            foreach (var component in _components)
             {
                 component.Start();
             }
-            state = ApplicationState.Start;
+            _state = ApplicationState.Start;
             AfterStart();
-            var endTime = TimeUtils.GetUnixTimestampMilliseconds();
-            log.Debug($"Start 执行时间:{endTime - beginTime}ms");
+            var endTime = Time.GetUnixTimestampMilliseconds();
+            _log.Debug($"Start 执行时间:{endTime - beginTime}ms");
         }
 
         private void AfterStart()
         {
-            var beginTime = TimeUtils.GetUnixTimestampMilliseconds();
-            if (state >= ApplicationState.AfterStart)
+            var beginTime = Time.GetUnixTimestampMilliseconds();
+            if (_state >= ApplicationState.AfterStart)
             {
-                log.Error("已经执行AfterStart");
+                _log.Error("已经执行AfterStart");
                 return;
             }
 
-            foreach (var component in components)
+            foreach (var component in _components)
             {
                 component.AfterStart();
             }
-            state = ApplicationState.AfterStart;
-            var endTime = TimeUtils.GetUnixTimestampMilliseconds();
-            log.Debug($"AfterStart 执行时间:{endTime - beginTime}ms");
+            _state = ApplicationState.AfterStart;
+            var endTime = Time.GetUnixTimestampMilliseconds();
+            _log.Debug($"AfterStart 执行时间:{endTime - beginTime}ms");
+            StartLoop();
+        }
+
+        private void StartLoop()
+        {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            Time.LastTime = stopwatch.Elapsed.TotalMilliseconds;
+            while (_state == ApplicationState.AfterStart)
+            {
+                try
+                {
+                    double curTime = stopwatch.Elapsed.TotalMilliseconds;
+                    Time.DeltaTime = (curTime - Time.LastTime);
+                    Time.LastTime = curTime;
+                    Time.AccTime += Time.DeltaTime;
+                    //_log.Info($"deltaTime:{deltaTime}");
+                    Thread.Sleep(1);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ExceptionUtils.Print(ex));
+                }
+            }
         }
 
         public void Stop()
         {
-            var beginTime = TimeUtils.GetUnixTimestampMilliseconds();
-            if (state >= ApplicationState.Stop)
+            var beginTime = Time.GetUnixTimestampMilliseconds();
+            if (_state >= ApplicationState.Stop)
             {
-                log.Error("已经执行Stop");
+                _log.Error("已经执行Stop");
                 return;
             }
-            foreach (var component in components)
+            foreach (var component in _components)
             {
                 component.Stop();
             }
-            var endTime = TimeUtils.GetUnixTimestampMilliseconds();
-            log.Debug($"Stop 执行时间:{endTime - beginTime}ms");
+            var endTime = Time.GetUnixTimestampMilliseconds();
+            _log.Debug($"Stop 执行时间:{endTime - beginTime}ms");
         }
 
         public T GetComponent<T>()
         {
-            foreach (var component in components)
+            foreach (var component in _components)
             {
                 if(component.GetType() == typeof(T))
                 {
@@ -123,6 +150,11 @@
                 }
             }
             return default(T);
+        }
+
+        public void AddComponent(IComponent component)
+        {
+            _components.Add(component);
         }
     }
 }

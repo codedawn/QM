@@ -12,7 +12,7 @@
             return typeof(Response);
         }
 
-        public IResponse Handle(IMessage message, ISession session)
+        public async Task<IResponse> Handle(IMessage message, ISession session)
         {
             if (message is not Request request)
             {
@@ -23,7 +23,7 @@
             response.Id = request.Id;
             try
             {
-                Run(request, response, session);
+                await Run(request, response, session);
             }
             catch (Exception ex)
             {
@@ -33,6 +33,6 @@
             return response;
         }
 
-        protected abstract void Run(Request request, Response response, ISession session);
+        protected abstract Task Run(Request request, Response response, ISession session);
     }
 }

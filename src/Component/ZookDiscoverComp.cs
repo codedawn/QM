@@ -20,7 +20,16 @@ namespace QM
             _zookeeperService = new ZookeeperService();
             _routeComp = _application.GetComponent<RouteComp>();
 
-            _zookeeperService.OnWatch += RefreshServerInfo;
+            _zookeeperService.OnWatch += async () => 
+            {
+                try
+                {
+                    await RefreshServerInfo();
+                }catch (Exception ex)
+                {
+                    _log.Error(ExceptionUtils.Print(ex));
+                }
+            };
             AsyncHelper.RunSync(() => _zookeeperService.StartAsync());
             AsyncHelper.RunSync(() => _zookeeperService.RegisterAsync($"/{Application.current.serverType}:{Application.current.serverId}:127.0.0.1:" + Application.current.rpcPort, "127.0.0.1:29999"));
             base.Start();
@@ -33,7 +42,7 @@ namespace QM
             base.Stop();
         }
 
-        public async void RefreshServerInfo()
+        public async Task RefreshServerInfo()
         {
             var serverTypes = new Dictionary<string, List<string>>();
             var serverAddrs = new Dictionary<string, IPEndPoint>();

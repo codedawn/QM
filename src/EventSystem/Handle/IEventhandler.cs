@@ -8,7 +8,7 @@ namespace QM
 {
     public interface IEventHandler
     {
-        public void Handle(IEvent e);
+        public Task Handle(IEvent e);
 
         public Type GetEventType();
     }

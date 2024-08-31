@@ -12,12 +12,12 @@ namespace QM
         {
             return typeof(T);
         }
-        public void Handle(IEvent e)
+        public async Task Handle(IEvent e)
         {
-            Run((T)e);
+            await Run((T)e);
         }
 
-        public abstract void Run(T e);
+        public abstract Task Run(T e);
 
     }
 }

@@ -26,13 +26,13 @@
             }
         }
 
-        public void Publish(IEvent e)
+        public async Task Publish(IEvent e)
         {
             if (_eventHandlers.TryGetValue(e.GetType(), out List<IEventHandler> handlers))
             {
                 foreach (IEventHandler handler in handlers)
                 {
-                    handler.Handle(e);
+                    await handler.Handle(e);
                 }
             }
         }

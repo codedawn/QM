@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNettyRPC", "DotNettyRPC\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test1", "Test1\Test1.csproj", "{AF4D3FBC-5124-4CFE-A23F-453BC7D06DA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{D4770573-692B-49EA-89D4-D80A405D6817}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{AF4D3FBC-5124-4CFE-A23F-453BC7D06DA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF4D3FBC-5124-4CFE-A23F-453BC7D06DA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF4D3FBC-5124-4CFE-A23F-453BC7D06DA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4770573-692B-49EA-89D4-D80A405D6817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4770573-692B-49EA-89D4-D80A405D6817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4770573-692B-49EA-89D4-D80A405D6817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4770573-692B-49EA-89D4-D80A405D6817}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -51,7 +51,7 @@ namespace QM
         }
 
 
-        public void GlobalHandle(IMessage message, ISession session)
+        public async Task GlobalHandleAsync(IMessage message, ISession session)
         {
             if (state != ComponentState.AfterStart)
             {
@@ -74,7 +74,7 @@ namespace QM
             {
                 foreach (IFilter filter in chainFilters)
                 {
-                    if (!filter.Before(message, session))
+                    if (!await filter.Before(message, session))
                     {
                         isFilter = true;
                         break;
@@ -101,13 +101,13 @@ namespace QM
             }
             if (isCrashError)
             {
-                SendReponse(response, session);
+                await SendReponseAsync(response, session);
                 return;
             }
 
             try
             {
-                response = _messageDispatcher.Dispatch(message, session, routeInfo);
+                response = await _messageDispatcher.DispatchAsync(message, session, routeInfo);
             }
             catch (Exception e)
             {
@@ -121,11 +121,11 @@ namespace QM
                 throw;
 #endif
             }
-            SendReponse(response, session);
+            await SendReponseAsync(response, session);
 
             foreach (IFilter filter in chainFilters)
             {
-                filter.After(message, response, session);
+                await filter.After(message, response, session);
             }
         }
 
@@ -147,11 +147,11 @@ namespace QM
             return routeInfo;
         }
 
-        public void SendReponse(IResponse response, ISession session)
+        public async Task SendReponseAsync(IResponse response, ISession session)
         {
             if (response != null)
             {
-                session.Connection.Send(response);
+               await session.Connection.Send(response);
             }
         }
 

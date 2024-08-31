@@ -45,14 +45,13 @@ namespace QM
         /// <returns></returns>
         public async Task RegisterAsync(string node, string idEndPoint)
         {
-            _log.Info("RegisterAsync");
             byte[] bytes = Encoding.UTF8.GetBytes(idEndPoint);
             string path = _servicePath + node;
-            if (await _zookeeper.existsAsync(path) == null)
+            if (await _zookeeper.existsAsync(path) != null)
             {
-                _log.Info($"RegisterAsync ManagedThreadId :{Thread.CurrentThread.ManagedThreadId}");
-                await _zookeeper.createAsync(path, bytes, Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+                await _zookeeper.deleteAsync(path);
             }
+            await _zookeeper.createAsync(path, bytes, Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
         }
 
         public async Task UnregisterAsync(string node)
@@ -66,7 +65,6 @@ namespace QM
 
         public async Task<List<string>> GetServersAsync()
         {
-            _log.Info($"GetServersAsync ManagedThreadId :{Thread.CurrentThread.ManagedThreadId}");
             //如果外层使用AsyncHelper转同步这里会死锁
             ChildrenResult childrenResult = await _zookeeper.getChildrenAsync(_servicePath, true);
             List<string> servers = new List<string>();
@@ -96,7 +94,6 @@ namespace QM
 
         public override async Task process(WatchedEvent @event)
         {
-            Console.WriteLine(@event);
             var state = @event.getState();
             var type = @event.get_Type();
 

@@ -27,15 +27,15 @@ namespace QM
             this._cid = cid;
         }
 
-        public void Send(IMessage message)
+        public async Task Send(IMessage message)
         {
-            _channel.WriteAndFlushAsync(message);
+            await _channel.WriteAndFlushAsync(message);
         }
 
-        public void Close()
+        public async Task Close()
         {
             Console.WriteLine("close");
-            _channel.CloseAsync();
+            await _channel.CloseAsync();
         }
     }
 }

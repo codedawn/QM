@@ -5,26 +5,26 @@
      */
     public class ConnectorComp : Component
     {
-        private Application application;
-        private ISocket socket;
+        private Application _application;
+        private ISocket _socket;
         private ConnectionManager _connectionManager;
-        private ILog log;
-        private IMsgSchedule schedule;
+        private ILog _log;
+        private IMsgSchedule _schedule;
         private ServerComp _server;
         private SessionComp _sessionComp;
 
         public ConnectorComp(Application application)
         {
-            this.application = application;
+            this._application = application;
             this._connectionManager = new ConnectionManager();
-            this.socket = new SocketServer();
-            this.log = new ConsoleLog();
+            this._socket = new SocketServer();
+            this._log = new ConsoleLog();
         }
 
         public override void Start()
         {
-            _server = application.GetComponent<ServerComp>();
-            _sessionComp = application.GetComponent<SessionComp>();
+            _server = _application.GetComponent<ServerComp>();
+            _sessionComp = _application.GetComponent<SessionComp>();
             base.Start();
         }
 
@@ -36,24 +36,49 @@
 
         private void StartListen()
         {
-            socket.onConnect += OnConnect;
-            socket.onDisConnect += OnDisConnect;
-            socket.onMessage += OnMessage;
-            socket.Start();
+            _socket.onConnect += async (connection) =>
+            {
+                try
+                {
+                    await OnConnect(connection);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ExceptionUtils.Print(ex));
+                }
+            };
+            _socket.onDisConnect += OnDisConnect;
+            _socket.onMessage += async (message, connection) =>
+            {
+                try
+                {
+                    await OnMessage(message, connection);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex.ToString());
+                }
+            };
+            _socket.Start();
         }
 
-        private void OnConnect(IConnection connection)
+        private async Task OnConnect(IConnection connection)
         {
             var totalConn = _connectionManager.GetConnectionCount();
-            if (totalConn > application.maxConnectCount)
+            if (totalConn > _application.maxConnectCount)
             {
-                log.Warn($"连接数达到了{totalConn},最大连接数配置为{application.maxConnectCount},所以断开当前连接");
-                connection.Close();
+                _log.Warn($"连接数达到了{totalConn},最大连接数配置为{_application.maxConnectCount},所以断开当前连接");
+                await connection.Close();
                 return;
             }
+            //已经存在
+            if (_connectionManager.TryGetValue(connection.Address, out IConnection c))
+            {
+                await c.Close();
+            }
             _connectionManager.Add(connection.Address, connection);
-            Session session = new Session(connection.Cid, connection, TimeUtils.GetUnixTimestampMilliseconds());
-            _sessionComp.Add(session.Sid, session);
+            Session session = new Session(connection.Cid, connection, Time.GetUnixTimestampMilliseconds());
+            _sessionComp.AddOrUpdate(session.Sid, session);
         }
 
         private void OnDisConnect(IConnection connection)
@@ -61,15 +86,15 @@
             _connectionManager.Remove(connection.Address);
         }
 
-        private void OnMessage(IMessage message, IConnection connection)
+        private async Task OnMessage(IMessage message, IConnection connection)
         {
             Session session = (Session)_sessionComp.Get(connection.Cid);
-            HandleMessage(message, session);
+            await HandleMessageAsync(message, session);
         }
 
-        private void HandleMessage(IMessage message, Session session)
+        private async Task HandleMessageAsync(IMessage message, Session session)
         {
-            _server.GlobalHandle(message, session);
+            await _server.GlobalHandleAsync(message, session);
         }
 
         public override void Stop()

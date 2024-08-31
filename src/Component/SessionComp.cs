@@ -22,9 +22,9 @@ namespace QM
             base.Start();
         }
 
-        public void Add(string sid, ISession session)
+        public void AddOrUpdate(string sid, ISession session)
         {
-            _sessionManager.Add(sid, session);
+            _sessionManager.AddOrUpdate(sid, session);
         }
 
         public void Remove(string sid)
@@ -35,6 +35,11 @@ namespace QM
         public ISession Get(string sid)
         {
             return _sessionManager.Get(sid);
+        }
+
+        public List<ISession> GetAll()
+        {
+            return _sessionManager.GetAll();
         }
     }
 }

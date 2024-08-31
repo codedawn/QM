@@ -11,7 +11,12 @@ namespace QM
     {
         private ConcurrentDictionary<string, ISession> _sessions = new ConcurrentDictionary<string, ISession>();
 
-        public void Add(string sid, ISession session)
+        /// <summary>
+        /// 如果已经存在就更新
+        /// </summary>
+        /// <param name="sid"></param>
+        /// <param name="session"></param>
+        public void AddOrUpdate(string sid, ISession session)
         {
             if (_sessions.TryGetValue(sid, out ISession exist))
             {
@@ -30,6 +35,11 @@ namespace QM
                 return session;
             }
             return null;
+        }
+
+        public List<ISession> GetAll()
+        {
+            return _sessions.Values.ToList();
         }
 
         public void Remove(string sid)

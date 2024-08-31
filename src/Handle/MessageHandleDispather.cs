@@ -20,12 +20,12 @@
             }
         }
 
-        public IResponse Handle(IMessage message, ISession session)
+        public async Task<IResponse> Handle(IMessage message, ISession session)
         {
             handlers.TryGetValue(message.GetType(), out IMHandler handler);
             if (handler != null)
             {
-                IResponse response = handler.Handle(message, session);
+                IResponse response = await handler.Handle(message, session);
                 return response;
             }
             _log.Warn($"没有handle处理对应的message:{message}");

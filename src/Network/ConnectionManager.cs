@@ -9,31 +9,35 @@ namespace QM
 {
     public class ConnectionManager
     {
-        private ConcurrentDictionary<string, IConnection> connections = new();
+        private ConcurrentDictionary<string, IConnection> _connections = new();
 
         public void Add(string address, IConnection connection)
         {
-            if (connections.TryAdd(address, connection))
-            {
-                return;
-            }
-            else
-            {
-                //todo existed
-            }
+            _connections[address] = connection;
         }
 
-        public void Remove(string address)
+        public IConnection Remove(string address)
         {
-            if (connections.TryRemove(address, out IConnection connection))
+            if (_connections.TryRemove(address, out IConnection connection))
             {
-
+                return connection;
             }
+            return null;
+        }
+
+        public bool Exists(string address)
+        {
+            return _connections.ContainsKey(address);
+        }
+
+        public bool TryGetValue(string address, out IConnection connection)
+        {
+            return _connections.TryGetValue(address, out connection);
         }
 
         public int GetConnectionCount()
         {
-            return connections.Count;
+            return _connections.Count;
         }
     }
 }

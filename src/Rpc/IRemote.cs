@@ -6,6 +6,7 @@
 
         public Task<IResponse> Test(IMessage message, NetSession netSession);
 
-        public void Push(IMessage message, NetSession netSession);
+        public Task Push(IMessage message, NetSession netSession);
+        public Task Broadcast(IMessage message);
     }
 }

@@ -8,8 +8,26 @@ namespace Test1
         {
             ProxyGenerator generator = new ProxyGenerator();
             MyService myService = generator.CreateInterfaceProxyWithoutTarget<MyService>(new RpcIntercepter());
-            string result = await myService.GetData<string>();
-            Console.WriteLine(result);  
+            Action action = async () => {
+
+                try
+                {
+                    await myService.GetData<string>();
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            };
+            try
+            {
+                action?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            //Console.WriteLine(result);  
         }
     }
 
@@ -17,10 +35,11 @@ namespace Test1
     {
         public void Intercept(IInvocation invocation)
         {
-            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
             Task task = tcs.Task;
             tcs.SetResult("test");
             invocation.ReturnValue = task;
+            throw new NotImplementedException();
         }
     }
 

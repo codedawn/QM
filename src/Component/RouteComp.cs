@@ -36,6 +36,18 @@ namespace QM
             return null;
         }
 
+        public List<IPEndPoint> GetAddresses(string serverType)
+        {
+            List<IPEndPoint> result = new List<IPEndPoint>();
+            if (!_serverTypes.ContainsKey(serverType)) return result;
+
+            foreach (string addr in _serverTypes[serverType])
+            {
+                result.Add(_serverAddr[addr]);
+            }
+            return result;
+        }
+
         public void UpdateServer(Dictionary<string, List<string>> serverTypes, Dictionary<string, IPEndPoint> servers)
         {
             _serverTypes = serverTypes;

@@ -27,7 +27,7 @@ namespace Test
         {
             Application application = Application.CreateApplication("Server01", Application.Server, 30000);
             application.Start();
-            Console.ReadLine();
+            //Console.ReadLine();
         }
     }
 }

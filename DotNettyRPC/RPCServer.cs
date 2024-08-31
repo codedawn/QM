@@ -43,8 +43,10 @@ namespace DotNettyRPC
 
         private int _port { get; set; }
         private Dictionary<string, Type> _serviceHandle { get; set; } = new Dictionary<string, Type>();
-        ServerBootstrap _serverBootstrap { get; }
-        IChannel _serverChannel { get; set; }
+        private ServerBootstrap _serverBootstrap { get; }
+        private IChannel _serverChannel { get; set; }
+
+        private Type voidTaskResultType = Type.GetType("System.Threading.Tasks.VoidTaskResult", throwOnError: false);
         internal async Task<ResponseModel> GetResponse(RequestModel request)
         {
             ResponseModel response = new ResponseModel();
@@ -80,6 +82,10 @@ namespace DotNettyRPC
                     {
                         res = resultProperty.GetValue(task);
                     }
+                    if (res.GetType() == voidTaskResultType)
+                    {
+                        res = null;
+                    }
                 }
 
                 response.Success = true;
@@ -97,7 +103,9 @@ namespace DotNettyRPC
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Msg = ExceptionHelper.GetExceptionAllMsg(ex);
+                //response.Msg = ExceptionHelper.GetExceptionAllMsg(ex);
+                response.Msg = ex.Message;
+                throw;
             }
 
             return response;
