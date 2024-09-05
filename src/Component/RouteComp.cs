@@ -11,8 +11,10 @@ namespace QM
     public class RouteComp : Component
     {
         private readonly Application _application;
-        private Dictionary<string, List<string>> _serverTypes = new();
-        private Dictionary<string, IPEndPoint> _serverAddr = new();
+        private Dictionary<string, List<ServerInfo>> _serverTypes = new Dictionary<string, List<ServerInfo>>();
+        private Dictionary<string, IRouter> _routers = new Dictionary<string, IRouter>();
+        private IRouter _defaultRouter = new DefaultRouter();
+
         public RouteComp(Application application)
         {
             _application = application;
@@ -20,18 +22,29 @@ namespace QM
 
         public IPEndPoint Route(string serverType)
         {
-            if (_serverTypes.TryGetValue(serverType, out List<string> result))
+            if (_serverTypes.TryGetValue(serverType, out List<ServerInfo> result))
             {
-                return _serverAddr[result[0]];
+                if (_routers.TryGetValue(serverType, out IRouter route))
+                {
+                    return route.Route(result);
+                }
+
+                return _defaultRouter.Route(result);
             }
-            throw new Exception($"路由时找不到对应的serverType:{serverType}");
+            throw new QMException(ErrorCode.ServerTypeNoOne, $"找不到类型:{serverType}的机子");
         }
 
-        public IPEndPoint GetAddress(string serverId)
+        public IPEndPoint GetConnectorAddress(string serverId)
         {
-            if (_serverAddr.TryGetValue(serverId, out IPEndPoint iPEndPoint))
+            if (_serverTypes.TryGetValue(Application.Connector, out List<ServerInfo> serverInfos))
             {
-                return iPEndPoint;
+                foreach (var info in serverInfos)
+                {
+                    if (info.serverId == serverId)
+                    {
+                        return info.iPEndPoint;
+                    }
+                }
             }
             return null;
         }
@@ -41,17 +54,16 @@ namespace QM
             List<IPEndPoint> result = new List<IPEndPoint>();
             if (!_serverTypes.ContainsKey(serverType)) return result;
 
-            foreach (string addr in _serverTypes[serverType])
+            foreach (ServerInfo serverInfo in _serverTypes[serverType])
             {
-                result.Add(_serverAddr[addr]);
+                result.Add(serverInfo.iPEndPoint);
             }
             return result;
         }
 
-        public void UpdateServer(Dictionary<string, List<string>> serverTypes, Dictionary<string, IPEndPoint> servers)
+        public void UpdateServer(Dictionary<string, List<ServerInfo>> serverTypes)
         {
             _serverTypes = serverTypes;
-            _serverAddr = servers;
         }
     }
 }

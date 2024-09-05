@@ -1,6 +1,8 @@
-﻿namespace QM
+﻿using System;
+
+namespace QM
 {
-    public class ConsoleLog : ILog
+    public class ConsoleLogger : ILog
     {
         public void Debug(string message)
         {
@@ -10,6 +12,11 @@
         public void Error(string message)
         {
             Console.WriteLine(message);
+        }
+
+        public void Error(Exception exception)
+        {
+            Console.WriteLine(exception.ToString());
         }
 
         public void Info(string message)

@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace QM
 {
@@ -12,7 +15,7 @@ namespace QM
         public ZookDiscoverComp(Application application)
         {
             _application = application;
-            _log = new ConsoleLog();
+            _log = new ConsoleLogger();
         }
 
         public override void Start()
@@ -20,18 +23,19 @@ namespace QM
             _zookeeperService = new ZookeeperService();
             _routeComp = _application.GetComponent<RouteComp>();
 
-            _zookeeperService.OnWatch += async () => 
+            _zookeeperService.OnWatch += async () =>
             {
                 try
                 {
                     await RefreshServerInfo();
-                }catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
-                    _log.Error(ExceptionUtils.Print(ex));
+                    _log.Error(ex);
                 }
             };
             AsyncHelper.RunSync(() => _zookeeperService.StartAsync());
-            AsyncHelper.RunSync(() => _zookeeperService.RegisterAsync($"/{Application.current.serverType}:{Application.current.serverId}:127.0.0.1:" + Application.current.rpcPort, "127.0.0.1:29999"));
+            AsyncHelper.RunSync(() => _zookeeperService.RegisterAsync($"/{Application.current.serverType}:{Application.current.serverId}:127.0.0.1:" + Application.current.rpcPort, ""));
             base.Start();
         }
 
@@ -44,11 +48,10 @@ namespace QM
 
         public async Task RefreshServerInfo()
         {
-            var serverTypes = new Dictionary<string, List<string>>();
-            var serverAddrs = new Dictionary<string, IPEndPoint>();
-            // servertype:servername:ip:port
+            var serverTypes = new Dictionary<string, List<ServerInfo>>();
             List<string> servers = await _zookeeperService.GetServersAsync();
 
+            // serverType:serverId:ip:port
             foreach (var server in servers)
             {
                 var args = server.Split(':');
@@ -59,21 +62,21 @@ namespace QM
                     continue;
                 }
 
+                string serverType = args[0];
                 string serverId = args[1];
                 IPEndPoint endPoint = new IPEndPoint(ipAddress, port);
 
-                if (serverTypes.TryGetValue(args[0], out var serverIds))
+                if (serverTypes.TryGetValue(serverType, out var serverIds))
                 {
-                    serverIds.Add(serverId);
+                    serverIds.Add(new ServerInfo(endPoint, serverType, serverId, default));
                 }
                 else
                 {
-                    serverTypes[args[0]] = new List<string> { serverId };
+                    serverTypes[args[0]] = new List<ServerInfo> { new ServerInfo(endPoint, serverType, serverId, default) };
                 }
-                serverAddrs.Add(serverId, endPoint);
             }
 
-            _routeComp.UpdateServer(serverTypes, serverAddrs);
+            _routeComp.UpdateServer(serverTypes);
             _log.Info("RefreshServerInfo");
         }
     }

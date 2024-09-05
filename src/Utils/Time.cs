@@ -6,10 +6,6 @@ namespace QM
 {
     public class Time
     {
-        public static double LastTime { get; internal set; }
-        public static double AccTime { get; internal set; }
-        public static double DeltaTime { get; internal set; }
-
         /// <summary>
         /// 获取时间戳（秒）
         /// </summary>

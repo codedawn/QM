@@ -1,4 +1,6 @@
-﻿namespace QM
+﻿using System;
+
+namespace QM
 {
     /// <summary>
     /// 标记消息分发到指定类型的服务器

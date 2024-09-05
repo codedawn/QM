@@ -1,20 +1,25 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace QM
 {
     public class ServerComp : Component
     {
         private List<IFilter> chainFilters;
-        private ILog log;
+        private ILog _log;
         private MessageDispatcher _messageDispatcher;
         private Application _application;
         private ServerDispatcher _serverDispatcher;
+        private long _responseCount;
 
         public ServerComp(Application application)
         {
             _application = application;
             chainFilters = new List<IFilter>();
-            log = new ConsoleLog();
+            _log = new NLogger(typeof(ServerComp));
             InitFliter();
         }
 
@@ -55,7 +60,7 @@ namespace QM
         {
             if (state != ComponentState.AfterStart)
             {
-                log.Error("Server compoent状态不是AfterStart,不能处理信息");
+                _log.Error("Server compoent状态不是AfterStart,不能处理信息");
                 return;
             }
 
@@ -63,7 +68,7 @@ namespace QM
 
             if (!routeInfo.IsValid())
             {
-                log.Error($"收到来自客户端的非法消息message:{message.ToString()}，直接过滤");
+                _log.Error($"收到来自客户端的非法消息message:{message.ToString()}，直接过滤");
                 return;
             }
 
@@ -72,6 +77,7 @@ namespace QM
             bool isCrashError = false;
             try
             {
+                Stopwatch stopwatch = Stopwatch.StartNew();
                 foreach (IFilter filter in chainFilters)
                 {
                     if (!await filter.Before(message, session))
@@ -80,6 +86,8 @@ namespace QM
                         break;
                     }
                 }
+                stopwatch.Stop();
+                _log.Debug($"执行beforeFilter耗时：${stopwatch.ElapsedMilliseconds}ms");
             }
             catch (Exception e)
             {
@@ -88,7 +96,7 @@ namespace QM
                 {
                     response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
                 }
-                log.Error(e.ToString());
+                _log.Error(e.ToString());
 #if DEBUG
                 throw;
 #endif
@@ -116,7 +124,7 @@ namespace QM
                 {
                     response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
                 }
-                log.Error(e.ToString());
+                _log.Error(e.ToString());
 #if DEBUG
                 throw;
 #endif
@@ -151,7 +159,16 @@ namespace QM
         {
             if (response != null)
             {
-               await session.Connection.Send(response);
+                _responseCount++;
+                _log.Debug($"发送response总数：{_responseCount}");
+                try
+                {
+                    await session.Connection.Send(response);
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e);
+                }
             }
         }
 

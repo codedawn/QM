@@ -2,8 +2,10 @@
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
+using QM;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace DotNettyRPC
@@ -13,8 +15,9 @@ namespace DotNettyRPC
     /// </summary>
     public class RPCServer
     {
-        #region 构造函数
+        private ILog _log = new NLogger(typeof(RPCServer));
 
+        #region 构造函数
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -27,6 +30,7 @@ namespace DotNettyRPC
                 .Group(new MultithreadEventLoopGroup(), new MultithreadEventLoopGroup())
                 .Channel<TcpServerSocketChannel>()
                 .Option(ChannelOption.SoBacklog, 100)
+                .Option(ChannelOption.TcpNodelay, true)
                 .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
                 {
                     IChannelPipeline pipeline = channel.Pipeline;
@@ -47,23 +51,23 @@ namespace DotNettyRPC
         private IChannel _serverChannel { get; set; }
 
         private Type voidTaskResultType = Type.GetType("System.Threading.Tasks.VoidTaskResult", throwOnError: false);
-        internal async Task<ResponseModel> GetResponse(RequestModel request)
+        internal async Task<RPCResponse> GetResponse(RPCRequest request)
         {
-            ResponseModel response = new ResponseModel();
+            RPCResponse response = new RPCResponse();
             response.Id = request.Id;
             try
             {
                 var requestModel = request;
                 if (!_serviceHandle.ContainsKey(requestModel.ServiceName))
                 {
-                    throw new Exception($"RPC调用未找到该服务{requestModel.ServiceName}");
+                    throw new QMException(ErrorCode.RPCNotFoundService, $"RPC调用未找到该服务{requestModel.ServiceName}");
                 }
                 //todo 可以做缓存
                 var serviceType = _serviceHandle[requestModel.ServiceName];
                 var service = Activator.CreateInstance(serviceType);
                 var method = serviceType.GetMethod(requestModel.MethodName);
                 if (method == null)
-                    throw new Exception($"RPC调用未找到该方法{requestModel.MethodName}");
+                    throw new QMException(ErrorCode.RPCNotFoundMethod, $"RPC调用未找到该方法{requestModel.MethodName}");
                 List<short> paramterIndexs = requestModel.ParamterIndexs;
                 object[] paramters = requestModel.Paramters.ToArray();
                 for (int i = 0; i < paramters.Length; i++)
@@ -81,11 +85,16 @@ namespace DotNettyRPC
                     if (resultProperty != null)
                     {
                         res = resultProperty.GetValue(task);
+                        if (res.GetType() == voidTaskResultType)
+                        {
+                            res = null;
+                        }
                     }
-                    if (res.GetType() == voidTaskResultType)
+                    else
                     {
                         res = null;
                     }
+                    
                 }
 
                 response.Success = true;
@@ -98,16 +107,16 @@ namespace DotNettyRPC
                 {
                     response.DataIndex = -1;
                 }
-                //response.Msg = "";
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                //response.Msg = ExceptionHelper.GetExceptionAllMsg(ex);
-                response.Msg = ex.Message;
+                response.Msg = ExceptionHelper.GetExceptionAllMsg(ex);
+#if DEBUG
                 throw;
+#endif
+                _log.Error(ex);
             }
-
             return response;
         }
 

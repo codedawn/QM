@@ -1,4 +1,5 @@
 ﻿using DotNetty.Common.Utilities;
+using QM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DotNettyRPC
 {
-    public class TaskTimer
+    public class TaskTimer : ITaskTimer
     {
         private HashedWheelTimer _timer = new HashedWheelTimer();
 

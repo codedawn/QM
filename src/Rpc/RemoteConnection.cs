@@ -14,14 +14,15 @@ namespace QM
 
         public string Cid { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public void Close()
+        public Task Close()
         {
             throw new NotImplementedException();
         }
 
-        public void Send(IMessage message)
+        public Task Send(IMessage message)
         {
             response = (IResponse)message;
+            return Task.CompletedTask;
         }
     }
 }

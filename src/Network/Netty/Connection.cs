@@ -1,6 +1,8 @@
 ﻿
 
 using DotNetty.Transport.Channels;
+using System;
+using System.Threading.Tasks;
 
 namespace QM
 {
@@ -29,12 +31,17 @@ namespace QM
 
         public async Task Send(IMessage message)
         {
+            if (!IsConnect()) return;
             await _channel.WriteAndFlushAsync(message);
+        }
+
+        public bool IsConnect()
+        {
+            return (_channel.Open && _channel.Active && _channel.IsWritable);
         }
 
         public async Task Close()
         {
-            Console.WriteLine("close");
             await _channel.CloseAsync();
         }
     }

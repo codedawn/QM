@@ -1,9 +1,13 @@
-﻿namespace QM
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
+
+namespace QM
 {
     public class MessageDispatcher
     {
         private Application _application;
         private RpcComp _rpcForward;
+        private ILog _log = new NLogger(typeof(MessageDispatcher));
 
         public MessageDispatcher(Application application)
         {
@@ -16,12 +20,17 @@
             //当前服务器处理
             if(_application.serverType == routeInfo.ServerType)
             {
-                return await DoHandleAsync(message, session);
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                IResponse response = await DoHandleAsync(message, session);
+                stopwatch.Stop();
+                _log.Debug($"执行DoHandleAsync耗时：${stopwatch.ElapsedMilliseconds}ms");
+                return response;
             }
             //转发
             else
             {
-                return await DoForwardAsync(message, session, routeInfo);
+                IResponse response = await DoForwardAsync(message, session, routeInfo);
+                return response;
             }
         }
 

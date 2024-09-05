@@ -1,14 +1,16 @@
-﻿namespace QM
+﻿using System;
+using System.Threading.Tasks;
+
+namespace QM
 {
     [MessageHandler]
-    public class UserMessageHandler : MessageHandler<User, UserResponse>
+    public class UserMessageHandler : MessageHandler<UserRequest, UserResponse>
     {
-        protected async override Task Run(User request, UserResponse response, ISession session)
+        protected async override Task Run(UserRequest request, UserResponse response, ISession session)
         {
             RemoteSession remoteSession = session as RemoteSession;
             await EventSystem.Instance.Publish(new UserAddEvent() { Session = remoteSession });
             response.Name = request.Name;
-            Console.WriteLine($"UserMessageHandler {request}");
         }
     }
 }

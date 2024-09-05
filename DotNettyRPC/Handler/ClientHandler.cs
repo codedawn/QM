@@ -5,13 +5,12 @@ using System.Text;
 
 namespace DotNettyRPC
 {
-    class ClientHandler : ChannelHandlerAdapter
+    class ClientHandler<T> : ChannelHandlerAdapter
     {
-        private IClientWait _clientWait { get; }
-
-        public ClientHandler(IClientWait clientWait)
+        private RPCResponseHandler<T> _responseHandler;
+        public ClientHandler(RPCResponseHandler<T> responseHandler)
         {
-            _clientWait = clientWait;
+            _responseHandler = responseHandler;
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
@@ -19,14 +18,17 @@ namespace DotNettyRPC
             IByteBuffer buffer = message as IByteBuffer;
             byte[] bytes = new byte[buffer.ReadableBytes];
             buffer.ReadBytes(bytes);
-            _clientWait.Set(bytes);
+            _responseHandler.Handle(bytes);
+            base.ChannelRead(context, message);
         }
+
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            Console.WriteLine("Exception: " + exception);
+            //Console.WriteLine("Exception: " + exception);
             context.CloseAsync();
+            throw exception;
         }
     }
 }

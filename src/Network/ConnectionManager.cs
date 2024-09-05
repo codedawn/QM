@@ -9,8 +9,13 @@ namespace QM
 {
     public class ConnectionManager
     {
-        private ConcurrentDictionary<string, IConnection> _connections = new();
+        private ConcurrentDictionary<string, IConnection> _connections = new ConcurrentDictionary<string, IConnection>();
 
+        /// <summary>
+        /// 添加或覆盖IConnection
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="connection"></param>
         public void Add(string address, IConnection connection)
         {
             _connections[address] = connection;

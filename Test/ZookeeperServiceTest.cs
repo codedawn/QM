@@ -13,7 +13,7 @@ namespace Test
         {
             ZookeeperService zookeeperService = new ZookeeperService();
             AsyncHelper.RunSync(() => zookeeperService.StartAsync());
-            AsyncHelper.RunSync(() => zookeeperService.RegisterAsync("/server:server1" + "127.0.0.1:29999", "127.0.0.1:29999"));
+            AsyncHelper.RunSync(() => zookeeperService. RegisterAsync("/server:server1" + "127.0.0.1:29999", "127.0.0.1:29999"));
            // List<string> servers = AsyncHelper.RunSync(() => zookeeperService.GetServersAsync());
 
             Console.ReadLine();

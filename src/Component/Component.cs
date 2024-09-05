@@ -2,7 +2,7 @@
 {
     public abstract class Component : IComponent
     {
-        private ILog _log = new ConsoleLog();
+        private ILog _log = new ConsoleLogger();
         protected ComponentState state;
         protected Component() { state = ComponentState.Init; }
 

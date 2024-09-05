@@ -14,6 +14,10 @@ namespace QM.Demo
         {
             Room room = new Room();
             rooms.Add(room);
+            for (int i = 0; i < 10; i++)
+            {
+                room.AddPlayer(new Player($"player{i}", room));
+            }
             base.AfterStart();
         }
     }

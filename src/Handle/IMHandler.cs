@@ -1,4 +1,7 @@
-﻿namespace QM
+﻿using System;
+using System.Threading.Tasks;
+
+namespace QM
 {
     public interface IMHandler
     {

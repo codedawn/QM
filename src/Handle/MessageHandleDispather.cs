@@ -1,11 +1,15 @@
-﻿namespace QM
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace QM
 {
     /// <summary>
     /// 分发消息到具体的handle
     /// </summary>
     public class MessageHandleDispather
     {
-        private ILog _log = new ConsoleLog();
+        private ILog _log = new ConsoleLogger();
         public static readonly MessageHandleDispather Instance = new MessageHandleDispather();
         public Dictionary<Type, IMHandler> handlers = new Dictionary<Type, IMHandler>();
         private MessageHandleDispather() 
@@ -15,7 +19,7 @@
                 IMHandler handler = Activator.CreateInstance(type) as IMHandler;
                 if (!handlers.TryAdd(handler.GetMessageType(), handler))
                 {
-                    throw new Exception($"不能定义两个相同的Request消息处理handler:{type}");
+                    throw new QMException(ErrorCode.MessageHandlerDupli, $"不能定义两个相同的Request消息处理handler:{type}");
                 }
             }
         }

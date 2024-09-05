@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace QM
 {
@@ -33,7 +35,7 @@ namespace QM
             {
                 return server;
             }
-            throw new Exception($"该message：{message}没有使用MessageDisaptchAttribute标记转发的serverType");
+            throw new QMException(ErrorCode.MessageNoDispather, $"该message：{message}没有使用MessageDisaptchAttribute标记转发的serverType");
         }
     }
 }

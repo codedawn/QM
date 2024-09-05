@@ -1,10 +1,12 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace QM
 {
     public class RpcComp : Component
     {
-        private ILog _log = new ConsoleLog();
+        private ILog _log = new NLogger(typeof(RpcComp));
         private RpcServer _rpcServer;
         private RpcClient _rpcClient;
         private Application _application;
@@ -43,7 +45,7 @@ namespace QM
 
         public async Task PushToConnector(IMessage message, string serverId, string sid)
         {
-            IPEndPoint iPEndPoint = _routeComp.GetAddress(serverId);
+            IPEndPoint iPEndPoint = _routeComp.GetConnectorAddress(serverId);
             if (iPEndPoint == null)
             {
                 _log.Error($"Push消息时没有找到对应的serverId:{serverId}");

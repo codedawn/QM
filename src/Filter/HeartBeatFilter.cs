@@ -1,4 +1,6 @@
-﻿namespace QM
+﻿using System.Threading.Tasks;
+
+namespace QM
 {
     [Filter(includeServer = Application.Connector)]
     public class HeartBeatFilter : Filter
@@ -10,14 +12,6 @@
             Session se = (Session)session;
             if (message != null && message is Heatbeat heatbeat)
             {
-                long last = se.lastAccessTime;
-                long cur = Time.GetUnixTimestampMilliseconds();
-                long interval = cur - last;
-                se.lastAccessTime = cur;
-                if (interval > _idleTime)
-                {
-                    await EventSystem.Instance.Publish(new SessionIdleEvent(se, interval));
-                }
                 return false;
             }
             return true;

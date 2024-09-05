@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 namespace QM
 {
@@ -16,12 +19,22 @@ namespace QM
         public readonly string serverType;
         public readonly int port;
         public readonly int rpcPort;
-        public int maxConnectCount = 10000;
+        public int maxConnectCount = 100000;
 
-        public static Application current;
+        private static Application _current;
+        public static Application current
+        {
+            get { return _current; }
+            private set
+            {
+                if (_current != null) throw new QMException(ErrorCode.ServerBootDupli, "一个进程无法启动多个服务器");
+                _current = value;
+            }
+        }
 
         private Application(string serverId, string serverType, int port)
         {
+            current = this;
             this.serverId = serverId;
             this.serverType = serverType;
             this.port = port;
@@ -29,8 +42,8 @@ namespace QM
 
             _components = new List<IComponent>();
             isConnector = serverType == Connector;
-            _log = new ConsoleLog();
-            _log.Info($"服务器{serverId}开始启动==================================");
+            _log = new ConsoleLogger();
+            _log.Info($"服务器:{serverId} port:{port} rpcport:{rpcPort}开始启动==================================");
 
             Init();
 
@@ -54,14 +67,13 @@ namespace QM
                 _components.Add(new RouteComp(this));
                 _components.Add(new ZookDiscoverComp(this));
             }
-           
+
             _state = ApplicationState.Init;
         }
 
         public static Application CreateApplication(string serverId, string serverType, int port)
         {
-            current = new Application(serverId, serverType, port);
-            return current;
+            return new Application(serverId, serverType, port);
         }
 
         public void Start()
@@ -78,9 +90,9 @@ namespace QM
                 component.Start();
             }
             _state = ApplicationState.Start;
-            AfterStart();
             var endTime = Time.GetUnixTimestampMilliseconds();
             _log.Debug($"Start 执行时间:{endTime - beginTime}ms");
+            AfterStart();
         }
 
         private void AfterStart()
@@ -104,24 +116,7 @@ namespace QM
 
         private void StartLoop()
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            Time.LastTime = stopwatch.Elapsed.TotalMilliseconds;
-            while (_state == ApplicationState.AfterStart)
-            {
-                try
-                {
-                    double curTime = stopwatch.Elapsed.TotalMilliseconds;
-                    Time.DeltaTime = (curTime - Time.LastTime);
-                    Time.LastTime = curTime;
-                    Time.AccTime += Time.DeltaTime;
-                    //_log.Info($"deltaTime:{deltaTime}");
-                    Thread.Sleep(1);
-                }
-                catch (Exception ex)
-                {
-                    _log.Error(ExceptionUtils.Print(ex));
-                }
-            }
+            Console.ReadLine();
         }
 
         public void Stop()
@@ -144,7 +139,7 @@ namespace QM
         {
             foreach (var component in _components)
             {
-                if(component.GetType() == typeof(T))
+                if (component.GetType() == typeof(T))
                 {
                     return (T)component;
                 }

@@ -59,7 +59,8 @@ namespace QM
             _bootstrap
                 .Group(_bossGroup, _workerGroup)
                 .Channel<TcpServerSocketChannel>()
-                .Option(ChannelOption.SoBacklog, 100)
+                .Option(ChannelOption.SoBacklog, int.MaxValue)
+                .Option(ChannelOption.TcpNodelay, true)
                 .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
                 {
                     var pipeline = channel.Pipeline;
@@ -69,9 +70,6 @@ namespace QM
                 }));
 
             _bootstrapChannel = _bootstrap.BindAsync(Application.current.port).Result;
-            //Console.WriteLine("服务器启动成功");
-            //Console.ReadLine();
-            //await _bootstrapChannel?.CloseAsync();
         }
 
         public async void Close()

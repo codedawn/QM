@@ -1,12 +1,15 @@
 ﻿using org.apache.zookeeper;
+using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using static org.apache.zookeeper.ZooDefs;
 
 namespace QM
 {
     public class ZookeeperService
     {
-        private ILog _log = new ConsoleLog();
+        private ILog _log = new ConsoleLogger();
         private static readonly string _address = "127.0.0.1:2181";
         private static readonly int _sessionTimeout = 5000;
         private static readonly string _servicePath = "/service";

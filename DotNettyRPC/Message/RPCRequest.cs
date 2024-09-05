@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace DotNettyRPC
 {
     [MessagePackObject]
-    public class RequestModel
+    public class RPCRequest
     {
         [Key(0)]
         public long Id { get; set; }

@@ -1,21 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.1</TargetFramework>
+	<ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+	<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetty.Codecs" Version="0.7.6" />
-    <PackageReference Include="DotNetty.Handlers" Version="0.7.6" />
-    <PackageReference Include="MessagePack" Version="2.5.172" />
     <PackageReference Include="ZooKeeperNetEx" Version="3.4.12.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common\QMCommon.csproj" />
     <ProjectReference Include="..\DotNettyRPC\DotNettyRPC.csproj" />
   </ItemGroup>
 

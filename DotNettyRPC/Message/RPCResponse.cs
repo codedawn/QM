@@ -3,7 +3,7 @@
 namespace DotNettyRPC
 {
     [MessagePackObject]
-    public class ResponseModel
+    public class RPCResponse
     {
         [Key(0)]
         public long Id { get; set; }

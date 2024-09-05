@@ -1,4 +1,6 @@
-﻿namespace QM
+﻿using System;
+
+namespace QM
 {
     /// <summary>
     /// 定义消息index，用于编码

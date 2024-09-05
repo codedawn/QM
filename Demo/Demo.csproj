@@ -4,8 +4,9 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,13 +15,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\Src.csproj" />
+    <ProjectReference Include="..\Test\Test.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Plugin\libmagicphysx.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="runtimes\win-x64\native\libmagicphysx.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

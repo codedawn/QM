@@ -24,6 +24,7 @@ namespace QM
             {
                 socket.OnMessage(msg, context.Channel);
             }
+            base.ChannelRead(context, message);
         }
 
         public override void ChannelRegistered(IChannelHandlerContext context)
@@ -34,6 +35,12 @@ namespace QM
         public override void ChannelUnregistered(IChannelHandlerContext context)
         {
             socket.Disconnect(context.Channel);
+        }
+
+        public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
+        {
+            base.ExceptionCaught(context, exception);
+            context.CloseAsync().Wait();
         }
     }
 }

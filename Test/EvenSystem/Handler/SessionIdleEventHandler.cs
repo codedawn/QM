@@ -1,4 +1,7 @@
 ﻿
+using System;
+using System.Threading.Tasks;
+
 namespace QM
 {
     [EventHandler]
@@ -6,7 +9,6 @@ namespace QM
     {
         public override Task Run(SessionIdleEvent e)
         {
-            Console.WriteLine(e);
             e.session.Connection.Close();
             return Task.CompletedTask;
         }

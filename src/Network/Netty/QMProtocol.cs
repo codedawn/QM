@@ -1,5 +1,7 @@
 ﻿using DotNetty.Buffers;
 using MessagePack;
+using System;
+using System.Collections.Generic;
 
 namespace QM
 {
@@ -15,7 +17,7 @@ namespace QM
 
         public QMProtocol()
         {
-            _log = new ConsoleLog();
+            _log = new ConsoleLogger();
         }
 
         public void Decode(IByteBuffer input, List<object> output)
@@ -32,11 +34,7 @@ namespace QM
                 return;
             }
             short index = input.ReadShort();
-            //todo ping
-            //if (dataLength - 1 == 0)
-            //{
-            //    return;
-            //}
+
             byte[] bytes = new byte[dataLength - _indexLength];
             input.ReadBytes(bytes);
             var message = Deserialize(index, bytes);

@@ -1,6 +1,6 @@
 ﻿using Castle.DynamicProxy;
 
-namespace Test1
+namespace Test11
 {
     public class ProxyTest
     {

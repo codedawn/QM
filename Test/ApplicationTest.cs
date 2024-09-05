@@ -1,33 +1,73 @@
 ﻿using QM;
+using System.Diagnostics;
 
 namespace Test
 {
     public class ApplicationTest
     {
-        public static void Run()
-        {
-            Test1();
-            //Test2();
-        }
-
-        private static void Test1()
+        public static async void Run()
         {
             Task.Run(() =>
             {
-                Task.Delay(1500).Wait();
-                SocketClient socketClient = new SocketClient();
-                socketClient.RunClient();
+                TestConnector();
             });
 
-            Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
-            application.Start();
+            //await Task.Delay(1000);
+            //Task.Run(() => { TestClient(); });
+            //Test2();
+        }
+
+        public static void TestConnector()
+        {
+            //Task.Run(() =>
+            //{
+            //    Task.Delay(1500).Wait();
+            //    SocketClient socketClient = new SocketClient();
+            //    socketClient.Init();
+            //});
+
+            try
+            {
+                Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
+                application.Start();
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex);
+            }
+
             Console.ReadLine();
         }
 
-        private static void Test2()
+        public static void TestServer(int port)
         {
-            Application application = Application.CreateApplication("Server01", Application.Server, 30000);
-            application.Start();
+            try
+            {
+                Application application = Application.CreateApplication("Server01", Application.Server, port);
+                application.Start();
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex);
+            }
+           
+            Console.ReadLine();
+        }
+
+        public static async void TestClient()
+        {
+            SocketClient socketClient = new SocketClient();
+            socketClient.Init();
+            socketClient.SetOnPushCallback(push => { Console.WriteLine("TestClient:" + push); });
+
+            await socketClient.ConnectAsync("127.0.0.1", 20000);
+            UserRequest request = new UserRequest() { Id = 234214, Name = "TestClient" };
+            UserResponse userResponse = (UserResponse)await socketClient.SendRequestAsync(request);
+            Debug.Assert(userResponse.Id == request.Id);
+            Debug.Assert(userResponse.Name == request.Name);
+
             Console.ReadLine();
         }
     }

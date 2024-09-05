@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace QM
 {
@@ -9,8 +11,8 @@ namespace QM
     public class MessageOpcode
     {
         public static MessageOpcode Instance = new MessageOpcode();
-        private Dictionary<short, Type> messageOpcode = new Dictionary<short, Type>();
-        private Dictionary<Type, short> messageOpcodeReverse = new Dictionary<Type, short>();
+        private Dictionary<short, Type> _messageOpcode = new Dictionary<short, Type>();
+        private Dictionary<Type, short> _messageOpcodeReverse = new Dictionary<Type, short>();
 
         private MessageOpcode()
         {
@@ -20,24 +22,24 @@ namespace QM
                 if (attribute != null && attribute is MessageIndexAttribute m)
                 {
                     //不能出现两个相同的index
-                    if (!messageOpcode.TryAdd(m.index, type))
+                    if (!_messageOpcode.TryAdd(m.index, type))
                     {
-                        throw new Exception($"不能定义两个相同的MessageIndex:{m.index} {type}");
+                        throw new QMException(ErrorCode.MessageIndexDupli, $"不能定义两个相同的MessageIndex:{m.index} {type}");
                     }
-                    messageOpcodeReverse.Add(type, m.index);
+                    _messageOpcodeReverse.Add(type, m.index);
                 }
             }
         }
 
         public Type GetType(short index)
         {
-            messageOpcode.TryGetValue(index, out Type type);
+            _messageOpcode.TryGetValue(index, out Type type);
             return type;
         }
 
         public short? GetIndex(Type type)
         {
-            if (!messageOpcodeReverse.TryGetValue(type, out short index))
+            if (!_messageOpcodeReverse.TryGetValue(type, out short index))
             {
                 return null;
             }

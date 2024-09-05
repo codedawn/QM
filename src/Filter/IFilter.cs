@@ -1,4 +1,6 @@
-﻿namespace QM
+﻿using System.Threading.Tasks;
+
+namespace QM
 {
     public interface IFilter
     {

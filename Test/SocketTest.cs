@@ -15,7 +15,7 @@ namespace Test
             {
                 Task.Delay(3000).Wait();
                 SocketClient client = new SocketClient();
-                client.RunClient();
+                client.Init();
             });
 
             SocketServer server = new SocketServer();

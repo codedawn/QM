@@ -1,4 +1,8 @@
-﻿namespace QM
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace QM
 {
     /**
      * connector组件是socket的一个上层封装，处理socket事件（连接，断开，接受、发送消息，调度其他组件维护连接信息）
@@ -12,13 +16,17 @@
         private IMsgSchedule _schedule;
         private ServerComp _server;
         private SessionComp _sessionComp;
+        private long _messageCount;
+        private long _startTime;
+        private bool _isMeasuring;
+        private long _tmpCount;
 
         public ConnectorComp(Application application)
         {
             this._application = application;
             this._connectionManager = new ConnectionManager();
             this._socket = new SocketServer();
-            this._log = new ConsoleLog();
+            this._log = new NLogger(typeof(ConnectorComp));
         }
 
         public override void Start()
@@ -44,10 +52,22 @@
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ExceptionUtils.Print(ex));
+                    _log.Error(ex);
                 }
             };
-            _socket.onDisConnect += OnDisConnect;
+
+            _socket.onDisConnect += async (connection) => 
+            {
+                try
+                {
+                    await OnDisConnect(connection);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex);
+                }
+            };
+
             _socket.onMessage += async (message, connection) =>
             {
                 try
@@ -56,7 +76,7 @@
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex.ToString());
+                    _log.Error(ex);
                 }
             };
             _socket.Start();
@@ -81,13 +101,36 @@
             _sessionComp.AddOrUpdate(session.Sid, session);
         }
 
-        private void OnDisConnect(IConnection connection)
+        private async Task OnDisConnect(IConnection connection)
         {
-            _connectionManager.Remove(connection.Address);
+            if (_connectionManager.TryGetValue(connection.Address, out IConnection c))
+            {
+                await c.Close();
+            }
         }
 
         private async Task OnMessage(IMessage message, IConnection connection)
         {
+
+            Interlocked.Increment(ref _messageCount);
+            _log.Debug($"接收消息总数：{_messageCount}");
+
+            Interlocked.Increment(ref _tmpCount);
+            if (!_isMeasuring)
+            {
+                _isMeasuring = true;
+                Interlocked.Exchange(ref _tmpCount, 1);
+                _startTime = Time.GetUnixTimestampMilliseconds();
+            }
+            else
+            {
+                long endTime = Time.GetUnixTimestampMilliseconds();
+                if (endTime - _startTime > 1000)
+                {
+                    _isMeasuring = false;
+                    Console.WriteLine($"吞吐{_tmpCount}/sec");
+                }
+            }
             Session session = (Session)_sessionComp.Get(connection.Cid);
             await HandleMessageAsync(message, session);
         }

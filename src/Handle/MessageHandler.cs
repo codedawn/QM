@@ -1,4 +1,7 @@
-﻿namespace QM
+﻿using System;
+using System.Threading.Tasks;
+
+namespace QM
 {
     public abstract class MessageHandler<Request, Response> : IMHandler where Request : IRequest where Response : IResponse
     {   
@@ -14,13 +17,14 @@
 
         public async Task<IResponse> Handle(IMessage message, ISession session)
         {
-            if (message is not Request request)
+            if (!(message is Request request))
             {
                 throw new ArgumentException("消息类型转换IRequest错误");
             }
 
             Response response = (Response)Activator.CreateInstance(GetResponseType());
             response.Id = request.Id;
+            response.Code = (int)NetworkCode.Success;
             try
             {
                 await Run(request, response, session);
