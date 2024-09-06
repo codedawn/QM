@@ -14,7 +14,7 @@ namespace QM.Demo
             //Application application = Application.CreateApplication("Room01", Application.Server, 9999);
             //application.AddComponent(new RoomComp());
             //application.Start();
-            for (int i = 1; i <= 1; i++)
+            for (int i = 1; i <= 5; i++)
             {
                 int tmp = i;
                 Task.Run(() =>
@@ -28,7 +28,7 @@ namespace QM.Demo
         private async static void Test1(int id)
         {
             Console.WriteLine(id);
-            int count = 20;
+            int count = 10000;
             SocketClient client = new SocketClient();
             client.Init();
             await client.ConnectAsync("127.0.0.1", 20000);

@@ -14,8 +14,9 @@ namespace Test
             //Console.ReadLine();
             // AsyncHelperTest.Run();
             // DotNettyRPCTest.Run();
-           // NLogTest.Run();
+            // NLogTest.Run();
             //QMExceptionTest.Run();
+            //ServerCompTest.Run();
             Console.ReadLine();
         }
     }

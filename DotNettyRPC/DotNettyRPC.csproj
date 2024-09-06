@@ -12,10 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetty.Codecs" Version="0.7.6" />
-    <PackageReference Include="DotNetty.Handlers" Version="0.7.6" />
     <PackageReference Include="ImpromptuInterface" Version="8.0.4" />
-    <PackageReference Include="MessagePack" Version="2.1.90" />
   </ItemGroup>
 
   <ItemGroup>

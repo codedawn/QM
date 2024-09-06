@@ -20,16 +20,27 @@ namespace QM
             //当前服务器处理
             if(_application.serverType == routeInfo.ServerType)
             {
+#if DEBUG
                 Stopwatch stopwatch = Stopwatch.StartNew();
+#endif
                 IResponse response = await DoHandleAsync(message, session);
+#if DEBUG
                 stopwatch.Stop();
                 _log.Debug($"执行DoHandleAsync耗时：${stopwatch.ElapsedMilliseconds}ms");
+#endif
                 return response;
             }
             //转发
             else
             {
+#if DEBUG
+                Stopwatch stopwatch = Stopwatch.StartNew();
+#endif
                 IResponse response = await DoForwardAsync(message, session, routeInfo);
+#if DEBUG
+                stopwatch.Stop();
+                _log.Debug($"执行DoForwardAsync耗时：${stopwatch.ElapsedMilliseconds}ms");
+#endif
                 return response;
             }
         }

@@ -8,7 +8,6 @@ namespace QM
 {
     public interface ITaskTimer
     {
-        public void schedule(Action<long> action, long args, int timeout);
         public void schedule(Action action, int timeout);
     }
 }

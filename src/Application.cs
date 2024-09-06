@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace QM
 {
@@ -13,6 +14,7 @@ namespace QM
         private List<IComponent> _components;
         private ApplicationState _state;
         private ILog _log;
+        private bool _simpleDebug;//单线程处理消息，调试会简单很多
 
         public readonly bool isConnector;
         public readonly string serverId;
@@ -44,9 +46,18 @@ namespace QM
             isConnector = serverType == Connector;
             _log = new ConsoleLogger();
             _log.Info($"服务器:{serverId} port:{port} rpcport:{rpcPort}开始启动==================================");
+            if (_simpleDebug)
+            {
+                _log.Info("警告：调试模式下性能会下降");
+            }
 
             Init();
 
+        }
+
+        private Application(string serverId, string serverType, int port, bool simpleDebug) : this(serverId, serverType, port)
+        {
+            this._simpleDebug = simpleDebug;
         }
 
         private void Init()
@@ -71,9 +82,9 @@ namespace QM
             _state = ApplicationState.Init;
         }
 
-        public static Application CreateApplication(string serverId, string serverType, int port)
+        public static Application CreateApplication(string serverId, string serverType, int port, bool simpleDebug = false)
         {
-            return new Application(serverId, serverType, port);
+            return new Application(serverId, serverType, port, simpleDebug);
         }
 
         public void Start()
@@ -117,6 +128,10 @@ namespace QM
         private void StartLoop()
         {
             Console.ReadLine();
+            //while (true)
+            //{
+            //    Thread.Sleep(1);
+            //}
         }
 
         public void Stop()
@@ -150,6 +165,11 @@ namespace QM
         public void AddComponent(IComponent component)
         {
             _components.Add(component);
+        }
+
+        public bool GetDebug()
+        {
+            return _simpleDebug;
         }
     }
 }

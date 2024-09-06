@@ -7,7 +7,7 @@ namespace Test1
     {
         public static void Run(int port)
         {
-            ApplicationTest.TestServer(port);
+            ApplicationTest.TestServer(port, false);
         }
     }
 }

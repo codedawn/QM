@@ -107,14 +107,22 @@ namespace QM
             {
                 await c.Close();
             }
+            //todo session
         }
 
         private async Task OnMessage(IMessage message, IConnection connection)
         {
-
             Interlocked.Increment(ref _messageCount);
             _log.Debug($"接收消息总数：{_messageCount}");
+            
+            Session session = (Session)_sessionComp.Get(connection.Cid);
+            await HandleMessageAsync(message, session);
+            //measurement
+            Measurement();
+        }
 
+        private void Measurement()
+        {
             Interlocked.Increment(ref _tmpCount);
             if (!_isMeasuring)
             {
@@ -131,8 +139,6 @@ namespace QM
                     Console.WriteLine($"吞吐{_tmpCount}/sec");
                 }
             }
-            Session session = (Session)_sessionComp.Get(connection.Cid);
-            await HandleMessageAsync(message, session);
         }
 
         private async Task HandleMessageAsync(IMessage message, Session session)

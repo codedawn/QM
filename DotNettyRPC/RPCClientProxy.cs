@@ -32,7 +32,7 @@ namespace DotNettyRPC
             _serviceType = serviceType;
             _serviceName = serviceType.Name;
             _timeout = timeout;
-            _rpcAwait = new CommonAwait<T>(_timeout, new TaskTimer());
+            _rpcAwait = new CommonAwait<T>(_timeout, new TaskTimer(), "RPCAwait");
             _bootstrap = new Bootstrap()
                 .Group(new MultithreadEventLoopGroup())
                 .Channel<TcpSocketChannel>()

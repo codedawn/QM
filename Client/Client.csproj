@@ -11,7 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\QMCommon.csproj" />
-    <ProjectReference Include="..\src\Src.csproj" />
   </ItemGroup>
 
 

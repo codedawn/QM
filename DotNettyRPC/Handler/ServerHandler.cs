@@ -1,11 +1,13 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
+using QM;
 using System;
 
 namespace DotNettyRPC
 {
     class ServerHandler : ChannelHandlerAdapter
     {
+        private ILog _log = new NLogger(typeof(ServerHandler));
         public ServerHandler(RPCServer rPCServer)
         {
             _rpcServer = rPCServer;
@@ -27,7 +29,7 @@ namespace DotNettyRPC
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
             context.CloseAsync();
-            throw exception;
+            _log.Error(exception);
         }
     }
 }

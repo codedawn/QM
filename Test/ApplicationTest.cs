@@ -28,7 +28,8 @@ namespace Test
 
             try
             {
-                Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
+                //Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
+                Application application = Application.CreateApplication("Connector01", Application.Connector, 20000, false);
                 application.Start();
             }
             catch (Exception ex)
@@ -40,11 +41,12 @@ namespace Test
             Console.ReadLine();
         }
 
-        public static void TestServer(int port)
+        public static void TestServer(int port, bool isSimple)
         {
             try
             {
-                Application application = Application.CreateApplication("Server01", Application.Server, port);
+                //Application application = Application.CreateApplication("Server01", Application.Server, port);
+                Application application = Application.CreateApplication("Server01", Application.Server, port, isSimple);
                 application.Start();
             }
             catch (Exception ex)

@@ -55,6 +55,12 @@ namespace QM
             IProtocol protocol = new QMProtocol();
             _bossGroup = new MultithreadEventLoopGroup();
             _workerGroup = new MultithreadEventLoopGroup();
+#if DEBUG
+            bool isSimpleDebug = Application.current.GetDebug();
+            if (isSimpleDebug)
+                _workerGroup = new MultithreadEventLoopGroup(1);
+#endif
+
             _bootstrap = new ServerBootstrap();
             _bootstrap
                 .Group(_bossGroup, _workerGroup)
