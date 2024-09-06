@@ -8,7 +8,7 @@
         4.支持自定义消息协议，自定义消息，自定义事件
         5.代码简单易懂，适合进行二次定制，同时有不错的性能
 ### 1. 涉及技术
-     TCP通信使用dotnetty、消息序列化使用messagepack、rpc二次开发自DotNettyRpc、服务器发现Zookeeper
+  TCP通信使用dotnetty、消息序列化使用messagepack、rpc二次开发自DotNettyRpc、服务器发现Zookeeper
 ### 2. 支持四种消息类型的消息
 分别是request，response，notify和push，客户端发起request到服务器端，服务器端处理后会给其返回响应response;notify是客户端发给服务端的通知，也就是不需要服务端给予回复的请求;push是服务端主动给客户端推送消息的类型。
 ### 3. 开始使用
