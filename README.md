@@ -20,4 +20,4 @@ Application application = Application.CreateApplication("Room01", Application.Se
 application.AddComponent(new RoomComp());
 application.Start();
 ```
-
+[Wiki文档](https://github.com/codedawn/QM/wiki)
