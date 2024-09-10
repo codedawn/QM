@@ -15,21 +15,33 @@ namespace DotNettyRPC
         RPCServer _rpcServer { get; }
         public override async void ChannelRead(IChannelHandlerContext context, object message)
         {
-            IByteBuffer msg = message as IByteBuffer;
-            byte[] bytes = new byte[msg.ReadableBytes];
-            msg.ReadBytes(bytes);
-            base.ChannelRead(context, bytes);
-
-            RPCRequest requestModel = MessagePackUtil.Deserialize<RPCRequest>(bytes);
-            RPCResponse response = await _rpcServer.GetResponse(requestModel);
-            byte[] sendMsg = MessagePackUtil.Serialize(response);
-            await context.WriteAndFlushAsync(Unpooled.WrappedBuffer(sendMsg));
+            IByteBuffer buffer = message as IByteBuffer;
+            if (buffer != null)
+            {
+                try
+                {
+                    byte[] bytes = new byte[buffer.ReadableBytes];
+                    buffer.ReadBytes(bytes);
+                    RPCRequest requestModel = MessagePackUtil.Deserialize<RPCRequest>(bytes);
+                    RPCResponse response = await _rpcServer.GetResponse(requestModel);
+                    byte[] sendMsg = MessagePackUtil.Serialize(response);
+                    await context.WriteAndFlushAsync(Unpooled.WrappedBuffer(sendMsg));
+                }
+                finally
+                {
+                    buffer.Release();
+                }
+            }
+            else
+            {
+                context.FireChannelRead(message);
+            }
         }
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            context.CloseAsync();
             _log.Error(exception);
+            context.CloseAsync();
         }
     }
 }
