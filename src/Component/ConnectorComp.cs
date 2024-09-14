@@ -13,13 +13,13 @@ namespace QM
         private ISocket _socket;
         private ConnectionManager _connectionManager;
         private ILog _log;
-        private IMsgSchedule _schedule;
         private ServerComp _server;
         private SessionComp _sessionComp;
         private long _messageCount;
         private long _startTime;
         private bool _isMeasuring;
         private long _tmpCount;
+        private ISessionFactory _sessionFactory;
 
         public ConnectorComp(Application application)
         {
@@ -33,6 +33,7 @@ namespace QM
         {
             _server = _application.GetComponent<ServerComp>();
             _sessionComp = _application.GetComponent<SessionComp>();
+            _sessionFactory = _application.GetSessionFactory();
             base.Start();
         }
 
@@ -94,20 +95,16 @@ namespace QM
             //已经存在
             if (_connectionManager.TryGetValue(connection.Address, out IConnection c))
             {
-                await c.Close();
+                await ConnectionClose(c);
             }
-            _connectionManager.Add(connection.Address, connection);
-            Session session = new Session(connection.Cid, connection, Time.GetUnixTimestampMilliseconds());
+            _connectionManager.AddOrUpdate(connection.Address, connection);
+            ISession session = _sessionFactory.CreateSession(connection);
             _sessionComp.AddOrUpdate(session.Sid, session);
         }
 
         private async Task OnDisConnect(IConnection connection)
         {
-            if (_connectionManager.TryGetValue(connection.Address, out IConnection c))
-            {
-                await c.Close();
-            }
-            //todo session
+            await ConnectionClose(connection);
         }
 
         private async Task OnMessage(IMessage message, IConnection connection)
@@ -115,10 +112,21 @@ namespace QM
             Interlocked.Increment(ref _messageCount);
             _log.Debug($"接收消息总数：{_messageCount}");
             
-            Session session = (Session)_sessionComp.Get(connection.Cid);
+            ISession session = connection.Session;
             await HandleMessageAsync(message, session);
             //measurement
             Measurement();
+        }
+
+        private async Task ConnectionClose(IConnection connection)
+        {
+            _connectionManager.Remove(connection.Address);
+            ISession session = connection.Session;
+            if (session != null)
+            {
+                _log.Warn("Connection连接断开，Session可能无法继续发送消息");
+            }
+            await connection.Close();
         }
 
         private void Measurement()
@@ -141,7 +149,7 @@ namespace QM
             }
         }
 
-        private async Task HandleMessageAsync(IMessage message, Session session)
+        private async Task HandleMessageAsync(IMessage message, ISession session)
         {
             await _server.GlobalHandleAsync(message, session);
         }

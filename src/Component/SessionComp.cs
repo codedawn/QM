@@ -27,9 +27,9 @@ namespace QM
             _sessionManager.AddOrUpdate(sid, session);
         }
 
-        public void Remove(string sid)
+        public bool TryRemove(string sid, out ISession session)
         {
-            _sessionManager.Remove(sid);
+            return _sessionManager.TryRemove(sid, out session);
         }
 
         public ISession Get(string sid)

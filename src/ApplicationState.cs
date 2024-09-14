@@ -8,6 +8,7 @@ namespace QM
 {
     public enum ApplicationState
     {
+        None,
         Init,
         Start,
         AfterStart,

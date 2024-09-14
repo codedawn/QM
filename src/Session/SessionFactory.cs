@@ -8,6 +8,7 @@ namespace QM
         public ISession CreateSession(IConnection connection)
         {
             Session session = new Session(connection.Cid, connection);
+            connection.Session = session;
             return session;
         }
 

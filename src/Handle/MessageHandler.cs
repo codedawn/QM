@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 namespace QM
 {
     public abstract class MessageHandler<Request, Response> : IMHandler where Request : IRequest where Response : IResponse
-    {   
+    {
+        private ILog _Log = new NLogger(typeof(MessageHandler<Request, Response>));
         public Type GetMessageType()
         {
             return typeof(Request);
@@ -29,9 +30,11 @@ namespace QM
             {
                 await Run(request, response, session);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                //todo error response
+                _Log.Error(e);
+                ErrorResponse errorResponse = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.MessageHandlerError, Message = e.ToString() };
+                return errorResponse;
             }
 
             return response;

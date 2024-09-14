@@ -5,7 +5,7 @@ namespace QM
 {
     public class RpcMessageOpcode : IRpcMessageOpcode
     {
-        public short? GetIndex(Type type)
+        public short GetIndex(Type type)
         {
             return MessageOpcode.Instance.GetIndex(type);
         }

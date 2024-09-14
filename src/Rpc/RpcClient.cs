@@ -1,7 +1,9 @@
 ﻿using DotNettyRPC;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
+using static org.apache.zookeeper.ZooDefs;
 
 namespace QM
 {
@@ -20,16 +22,34 @@ namespace QM
             return await client.Forward(message, netSession);
         }
 
-        public async Task Push(IMessage message, NetSession netSession, IPEndPoint iPEndPoint)
+        public async Task Push(IPush push, string sid, IPEndPoint iPEndPoint)
         {
             IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port, _timeout);
-            await client.Push(message, netSession);
+            await client.Push(push, sid);
         }
 
-        public async Task Broadcast(IMessage message, IPEndPoint iPEndPoint)
+        public async Task Broadcast(IPush push, IPEndPoint iPEndPoint)
         {
             IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port, _timeout);
-            await client.Broadcast(message);
+            await client.Broadcast(push);
+        }
+
+        public async Task BroadcastBySid(IPush push, List<string> sids, IPEndPoint iPEndPoint)
+        {
+            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port, _timeout);
+            await client.BroadcastBySid(push, sids);
+        }
+
+        public async Task SyncSession(NetSession netSession, IPEndPoint iPEndPoint)
+        {
+            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port, _timeout);
+            await client.SyncSession(netSession);
+        }
+
+        public async Task SessionClose(string sid, IPEndPoint iPEndPoint)
+        {
+            IRemote client = RPCClientFactory.GetClient<IRemote, IResponse>(iPEndPoint.Address.ToString(), iPEndPoint.Port, _timeout);
+            await client.SessionClose(sid);
         }
     }
 }

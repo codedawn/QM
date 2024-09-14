@@ -94,12 +94,9 @@ namespace QM
                 isCrashError = true;
                 if (message is IRequest request)
                 {
-                    response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
+                    response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.ToString() };
                 }
-                _log.Error(e.ToString());
-#if DEBUG
-                throw;
-#endif
+                _log.Error(e);
             }
 
             //before可以拦截消息，不会继续传播
@@ -122,12 +119,9 @@ namespace QM
                 isCrashError = true;
                 if (message is IRequest request)
                 {
-                    response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.Message };
+                    response = new ErrorResponse() { Id = request.Id, Code = (int)NetworkCode.InternalError, Message = e.ToString() };
                 }
-                _log.Error(e.ToString());
-#if DEBUG
-                throw;
-#endif
+                _log.Error(e);
             }
             await SendReponseAsync(response, session);
 
@@ -163,7 +157,7 @@ namespace QM
                 _log.Debug($"发送response总数：{_responseCount}");
                 try
                 {
-                    await session.Connection.Send(response);
+                    await session.Send(response);
                 }
                 catch (Exception e)
                 {

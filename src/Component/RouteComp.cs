@@ -34,7 +34,7 @@ namespace QM
             throw new QMException(ErrorCode.ServerTypeNoOne, $"找不到类型:{serverType}的机子");
         }
 
-        public IPEndPoint GetConnectorAddress(string serverId)
+        public IPEndPoint GetConnector(string serverId)
         {
             if (_serverTypes.TryGetValue(Application.Connector, out List<ServerInfo> serverInfos))
             {

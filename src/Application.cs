@@ -1,6 +1,11 @@
-﻿using System;
+﻿using DotNetty.Buffers;
+using DotNetty.Common;
+using MessagePack.Resolvers;
+using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,13 +13,16 @@ namespace QM
 {
     public class Application
     {
-        public const string Connector = "Connector";
-        public const string Server = "Server";
+        public const string Connector = ServerType.Connector;
+        public const string Server = ServerType.Server;
 
         private List<IComponent> _components;
         private ApplicationState _state;
         private ILog _log;
-        private bool _simpleDebug;//单线程处理消息，调试会简单很多
+        private ILog _Nlog;
+        private ISessionFactory _sessionFactory;
+        private bool _simpleDebug;//单线程处理消息，调试会简单很多，多线程调试需要锁定某个线程
+        private TaskTimer _timer;
 
         public readonly bool isConnector;
         public readonly string serverId;
@@ -42,22 +50,68 @@ namespace QM
             this.port = port;
             this.rpcPort = port + 1;
 
+            _timer = new TaskTimer();
             _components = new List<IComponent>();
             isConnector = serverType == Connector;
             _log = new ConsoleLogger();
+            _Nlog = new NLogger(typeof(Application));
+            _sessionFactory = new SessionFactory();
             _log.Info($"服务器:{serverId} port:{port} rpcport:{rpcPort}开始启动==================================");
             if (_simpleDebug)
             {
-                _log.Info("警告：调试模式下性能会下降");
+                _log.Warn("警告：调试模式下性能会下降");
             }
+#if DEBUG
+            ResourceLeakDetector.Level = ResourceLeakDetector.DetectionLevel.Paranoid;
+#endif
 
-            Init();
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            //需要触发gc
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+        }
 
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            _Nlog.Error(e.Exception);
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            _Nlog.Error((Exception)e.ExceptionObject);
         }
 
         private Application(string serverId, string serverType, int port, bool simpleDebug) : this(serverId, serverType, port)
         {
             this._simpleDebug = simpleDebug;
+        }
+
+        public static Application CreateApplication(string serverId, string serverType, int port, bool simpleDebug = false)
+        {
+            return new Application(serverId, serverType, port, simpleDebug);
+        }
+
+        /// <summary>
+        /// 提前加载程序集，或者需要显示调用，不然程序集没加载找不到类型
+        /// </summary>
+        /// <param name="assemblies"></param>
+        public void LoadAssembly(string[] assemblies)
+        {
+            if (_state != ApplicationState.None) throw new QMException(ErrorCode.ServerBootError, "必须在启动之前执行");
+            foreach (string assembly in assemblies)
+            {
+                Assembly.Load(assembly);
+            }
+        }
+
+        public void SetSessionFactory(ISessionFactory sessionFactory)
+        {
+            if (_state != ApplicationState.None) throw new QMException(ErrorCode.ServerBootError, "必须在启动之前执行");
+            _sessionFactory = sessionFactory;
+        }
+
+        public ISessionFactory GetSessionFactory()
+        {
+            return _sessionFactory;
         }
 
         private void Init()
@@ -68,7 +122,7 @@ namespace QM
                 _components.Add(new ServerComp(this));
                 _components.Add(new RpcComp(this));
                 _components.Add(new RouteComp(this));
-                _components.Add(new ZookDiscoverComp(this));
+                _components.Add(new ZookeeperComp(this));
                 _components.Add(new SessionComp(this));
             }
             else
@@ -76,23 +130,20 @@ namespace QM
                 _components.Add(new ServerComp(this));
                 _components.Add(new RpcComp(this));
                 _components.Add(new RouteComp(this));
-                _components.Add(new ZookDiscoverComp(this));
+                _components.Add(new ZookeeperComp(this));
             }
 
             _state = ApplicationState.Init;
         }
 
-        public static Application CreateApplication(string serverId, string serverType, int port, bool simpleDebug = false)
-        {
-            return new Application(serverId, serverType, port, simpleDebug);
-        }
-
         public void Start()
         {
+            Init();
+
             var beginTime = Time.GetUnixTimestampMilliseconds();
             if (_state >= ApplicationState.Start)
             {
-                _log.Error("已经初始化");
+                _Nlog.Error("已经初始化");
                 return;
             }
 
@@ -111,7 +162,7 @@ namespace QM
             var beginTime = Time.GetUnixTimestampMilliseconds();
             if (_state >= ApplicationState.AfterStart)
             {
-                _log.Error("已经执行AfterStart");
+                _Nlog.Error("已经执行AfterStart");
                 return;
             }
 
@@ -139,7 +190,7 @@ namespace QM
             var beginTime = Time.GetUnixTimestampMilliseconds();
             if (_state >= ApplicationState.Stop)
             {
-                _log.Error("已经执行Stop");
+                _Nlog.Error("已经执行Stop");
                 return;
             }
             foreach (var component in _components)
@@ -170,6 +221,11 @@ namespace QM
         public bool GetDebug()
         {
             return _simpleDebug;
+        }
+
+        public void TaskSchedule(Action action, int timeoutMs)
+        {
+            _timer.schedule(action, timeoutMs);
         }
     }
 }

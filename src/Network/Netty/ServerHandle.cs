@@ -10,11 +10,12 @@ namespace QM
 {
     public class ServerHandle : ChannelHandlerAdapter
     {
-        private SocketServer socket;
+        private ILog _log = new NLogger(typeof(ServerHandle));
+        private SocketServer _socket;
 
         public ServerHandle(SocketServer socket)
         {
-            this.socket = socket;
+            this._socket = socket;
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
@@ -22,25 +23,25 @@ namespace QM
             IMessage msg = message as IMessage;
             if(msg != null)
             {
-                socket.OnMessage(msg, context.Channel);
+                _socket.OnMessage(msg, context.Channel);
             }
             base.ChannelRead(context, message);
         }
 
         public override void ChannelRegistered(IChannelHandlerContext context)
         {
-           socket.Connect(context.Channel);
+           _socket.Connect(context.Channel);
         }
 
         public override void ChannelUnregistered(IChannelHandlerContext context)
         {
-            socket.Disconnect(context.Channel);
+            _socket.Disconnect(context.Channel);
         }
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            base.ExceptionCaught(context, exception);
-            context.CloseAsync().Wait();
+            _log.Error(exception);
+            context.CloseAsync();
         }
     }
 }

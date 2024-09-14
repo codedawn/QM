@@ -6,13 +6,13 @@ namespace QM
     public class MessageDispatcher
     {
         private Application _application;
-        private RpcComp _rpcForward;
+        private RpcComp _rpcComp;
         private ILog _log = new NLogger(typeof(MessageDispatcher));
 
         public MessageDispatcher(Application application)
         {
             _application = application;
-            _rpcForward = _application.GetComponent<RpcComp>();
+            _rpcComp = _application.GetComponent<RpcComp>();
         }
 
         public async Task<IResponse> DispatchAsync(IMessage message, ISession session, RouteInfo routeInfo)
@@ -52,7 +52,7 @@ namespace QM
 
         public async Task<IResponse> DoForwardAsync(IMessage message, ISession session, RouteInfo routeInfo)
         {
-            return await _rpcForward.ForwardToServer(message, session, routeInfo);
+            return await _rpcComp.ForwardToServer(message, session, routeInfo);
         }
     }
 }

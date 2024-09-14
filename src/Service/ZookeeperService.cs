@@ -10,9 +10,10 @@ namespace QM
     public class ZookeeperService
     {
         private ILog _log = new ConsoleLogger();
-        private static readonly string _address = "127.0.0.1:2181";
-        private static readonly int _sessionTimeout = 5000;
+        private static readonly string _address = "127.0.0.1:2182";
         private static readonly string _servicePath = "/service";
+
+        private static readonly int _sessionTimeout = 5000;
         public Action OnWatch;
         private ZooKeeper _zookeeper;
 
@@ -43,23 +44,25 @@ namespace QM
         /// <summary>
         /// node格式必须为/servertype:servername:ip:port
         /// </summary>
-        /// <param name="node">/servertype:servername:ip:port</param>
-        /// <param name="idEndPoint">ip:port</param>
+        /// <param name="nodePath">/servertype:servername:ip:port</param>
+        /// <param name="data">ip:port</param>
         /// <returns></returns>
-        public async Task RegisterAsync(string node, string idEndPoint)
+        public async Task RegisterAsync(string nodePath, string data)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(idEndPoint);
-            string path = _servicePath + node;
+            byte[] bytes = Encoding.UTF8.GetBytes(data);
+            string path = _servicePath + nodePath;
             if (await _zookeeper.existsAsync(path) != null)
             {
-                await _zookeeper.deleteAsync(path);
+                _log.Error($"注册失败，zookeeper已经注册path:{path}");
+                return;
+                //await _zookeeper.deleteAsync(path);
             }
             await _zookeeper.createAsync(path, bytes, Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
         }
 
-        public async Task UnregisterAsync(string node)
+        public async Task UnregisterAsync(string nodePath)
         {
-            string path = _servicePath + node;
+            string path = _servicePath + nodePath;
             if (await _zookeeper.existsAsync(path) != null)
             {
                 await _zookeeper.deleteAsync(path);

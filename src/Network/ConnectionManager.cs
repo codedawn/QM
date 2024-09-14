@@ -16,7 +16,7 @@ namespace QM
         /// </summary>
         /// <param name="address"></param>
         /// <param name="connection"></param>
-        public void Add(string address, IConnection connection)
+        public void AddOrUpdate(string address, IConnection connection)
         {
             _connections[address] = connection;
         }

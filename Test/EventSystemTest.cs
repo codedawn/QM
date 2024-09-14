@@ -14,6 +14,7 @@ namespace Test
             public string Address => throw new NotImplementedException();
 
             public string Cid { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public ISession Session { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
             public Task Close()
             {

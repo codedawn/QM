@@ -42,12 +42,9 @@ namespace QM
             return _sessions.Values.ToList();
         }
 
-        public void Remove(string sid)
+        public bool TryRemove(string sid, out ISession session)
         {
-            if ( _sessions.TryRemove(sid, out ISession session))
-            {
-                //todo
-            }
+            return _sessions.TryRemove(sid, out session);
         }
 
         public int Count()

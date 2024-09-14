@@ -7,14 +7,13 @@ namespace QM
     {
         private long _idleTime = 5000;//ms
 
-        public override async Task<bool> Before(IMessage message, ISession session)
+        public override Task<bool> Before(IMessage message, ISession session)
         {
-            Session se = (Session)session;
             if (message != null && message is Heatbeat heatbeat)
             {
-                return false;
+                return Task.FromResult(false);
             }
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

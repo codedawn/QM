@@ -1,6 +1,4 @@
-﻿
-
-using DotNetty.Transport.Channels;
+﻿using DotNetty.Transport.Channels;
 using System;
 using System.Threading.Tasks;
 
@@ -15,6 +13,8 @@ namespace QM
 
         private string _cid;
         public string Cid { get { return _cid; } set { _cid = value; } }
+
+        public ISession Session { get; set; }
 
         public Connection(IChannel channel, string address)
         {
@@ -32,7 +32,7 @@ namespace QM
 
         public bool IsConnect()
         {
-            return (_channel.Open && _channel.Active && _channel.IsWritable);
+            return (_channel != null && _channel.Open && _channel.Active && _channel.IsWritable);
         }
 
         public async Task Close()

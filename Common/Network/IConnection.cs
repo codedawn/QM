@@ -10,6 +10,7 @@ namespace QM
     {
         public string Address {  get;}
         public string Cid { get; set; }
+        public ISession Session { get; set; }
         public Task Send(IResponse response);
         public Task Send(IPush push);
         public Task Close();

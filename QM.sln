@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMCommon", "Common\QMCommon.csproj", "{4E40F783-4B63-47DA-95C1-7A905F9C0855}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoCommon", "DemoCommon\DemoCommon.csproj", "{5135FC93-2740-4068-A429-6530CFEA9AEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{4E40F783-4B63-47DA-95C1-7A905F9C0855}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E40F783-4B63-47DA-95C1-7A905F9C0855}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E40F783-4B63-47DA-95C1-7A905F9C0855}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5135FC93-2740-4068-A429-6530CFEA9AEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5135FC93-2740-4068-A429-6530CFEA9AEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5135FC93-2740-4068-A429-6530CFEA9AEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5135FC93-2740-4068-A429-6530CFEA9AEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
