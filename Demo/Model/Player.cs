@@ -1,67 +1,81 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QM.Demo
 {
     public class Player
     {
-        public Vector2 position;
-        public int point;
-        public float speed;
-        public Reward target;
+        private Vector2 _position;
+        public Vector2 Position => _position;
+        private int _point;
+        public int Point => _point;
+        private float _speed;
+        private Reward _target;
+
+        private string _name;
+        public string Name { get => _name; private set { } }
         private bool isWayfinding;
-        public string name;
-        private Room room;
-        private Random random = new Random();
+        private Room _room;
+        private Random _random = new Random();
+        private ISession _session;
+        public ISession Session => _session;
+        private long _userId;
+        public long UserId => _userId;
 
 
-        public Player(string name, Room room) 
+
+        public Player(long id, string name, Room room, ISession session)
         {
-            this.name = name;
-            this.room = room;
+            this._name = name;
+            this._room = room;
+            this._userId = id;
+            this._session = session;
 
-            position = new Vector2(random.Next(10), random.Next(10));
-            speed = 5;
+            _position = new Vector2(_random.Next(10), _random.Next(10));
+            _speed = _random.Next(5, 10);
         }
 
         public void Update(float dt)
         {
             if (isWayfinding)
             {
-                Vector2 dir = Vector2.Normalize(target.position - position);
-                position += speed * dt * dir;
+                Vector2 dir = Vector2.Normalize(_target.position - _position);
+                _position += _speed * dt * dir;
 
-                Vector2 afterDir = Vector2.Normalize(target.position - position);
-                if (Vector2.Distance(position, target.position) < 0.1 || afterDir == -dir)
+                Vector2 afterDir = Vector2.Normalize(_target.position - _position);
+                if (Vector2.Distance(_position, _target.position) < 0.5 || IsOppositeDirection(afterDir, dir))
                 {
                     isWayfinding = false;
-                    room.TouchReward(target, this);
+                    _room.TouchReward(_target, this);
                 }
             }
             else
             {
-                if (random.Next(10) % 2 ==0)
+                if (_random.Next(10) % 2 == 0)
                 {
-                    SetTarget(room.GetNearerReward(position));
+                    SetTarget(_room.GetNearerReward(_position));
                 }
             }
+        }
+
+        private bool IsOppositeDirection(Vector2 dir1, Vector2 dir2)
+        {
+            const float epsilon = 0.01f; // 容差值
+            return Vector2.Dot(Vector2.Normalize(dir1), Vector2.Normalize(dir2)) < -1 + epsilon;
         }
 
         public void SetTarget(Reward target)
         {
             if (target == null) return;
-            this.target = target;
+            this._target = target;
             isWayfinding = true;
         }
 
         public void AddPoint(int point)
         {
-            this.point += point;
-            Console.WriteLine($"name:{name}获得积分:{point},累计积分:{this.point}");
+            this._point += point;
+            Console.WriteLine($"name:{_name}获得积分:{point},累计积分:{this._point}");
         }
+
     }
 }

@@ -14,11 +14,17 @@ namespace QM.Demo
         {
             Room room = new Room();
             rooms.Add(room);
-            for (int i = 0; i < 10; i++)
-            {
-                room.AddPlayer(new Player($"player{i}", room));
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    room.AddPlayer(new Player(i, $"player{i}", room, null));
+            //}
             base.AfterStart();
+        }
+
+        public async void JoinRoom(long userId, ISession session)
+        {
+            Room room = rooms[0];
+            await room.AddPlayer(new Player(userId, $"player{userId}", room, session));
         }
     }
 }
