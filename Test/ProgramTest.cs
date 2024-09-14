@@ -13,12 +13,13 @@ namespace Test
             //EventSystemTest.Run();
             //Console.ReadLine();
             // AsyncHelperTest.Run();
-             //DotNettyRPCTest.Run();
+            //DotNettyRPCTest.Run();
             // NLogTest.Run();
             //QMExceptionTest.Run();
             //ServerCompTest.Run();
-           // MessagePackTest.Run();
+            // MessagePackTest.Run();
             //TimeTest.Run();
+           // IdWorkerTest.Run();
             Console.ReadLine();
         }
 
