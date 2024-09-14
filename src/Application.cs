@@ -140,7 +140,7 @@ namespace QM
         {
             Init();
 
-            var beginTime = Time.GetUnixTimestampMilliseconds();
+            var beginTime = Time.GetUtc8TimestampMilliseconds();
             if (_state >= ApplicationState.Start)
             {
                 _Nlog.Error("已经初始化");
@@ -152,14 +152,14 @@ namespace QM
                 component.Start();
             }
             _state = ApplicationState.Start;
-            var endTime = Time.GetUnixTimestampMilliseconds();
+            var endTime = Time.GetUtc8TimestampMilliseconds();
             _log.Debug($"Start 执行时间:{endTime - beginTime}ms");
             AfterStart();
         }
 
         private void AfterStart()
         {
-            var beginTime = Time.GetUnixTimestampMilliseconds();
+            var beginTime = Time.GetUtc8TimestampMilliseconds();
             if (_state >= ApplicationState.AfterStart)
             {
                 _Nlog.Error("已经执行AfterStart");
@@ -171,7 +171,7 @@ namespace QM
                 component.AfterStart();
             }
             _state = ApplicationState.AfterStart;
-            var endTime = Time.GetUnixTimestampMilliseconds();
+            var endTime = Time.GetUtc8TimestampMilliseconds();
             _log.Debug($"AfterStart 执行时间:{endTime - beginTime}ms");
             StartLoop();
         }
@@ -187,7 +187,7 @@ namespace QM
 
         public void Stop()
         {
-            var beginTime = Time.GetUnixTimestampMilliseconds();
+            var beginTime = Time.GetUtc8TimestampMilliseconds();
             if (_state >= ApplicationState.Stop)
             {
                 _Nlog.Error("已经执行Stop");
@@ -197,7 +197,7 @@ namespace QM
             {
                 component.Stop();
             }
-            var endTime = Time.GetUnixTimestampMilliseconds();
+            var endTime = Time.GetUtc8TimestampMilliseconds();
             _log.Debug($"Stop 执行时间:{endTime - beginTime}ms");
         }
 

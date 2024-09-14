@@ -136,11 +136,11 @@ namespace QM
             {
                 _isMeasuring = true;
                 Interlocked.Exchange(ref _tmpCount, 1);
-                _startTime = Time.GetUnixTimestampMilliseconds();
+                _startTime = Time.GetUtc8TimestampMilliseconds();
             }
             else
             {
-                long endTime = Time.GetUnixTimestampMilliseconds();
+                long endTime = Time.GetUtc8TimestampMilliseconds();
                 if (endTime - _startTime > 1000)
                 {
                     _isMeasuring = false;

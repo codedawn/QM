@@ -10,7 +10,7 @@ namespace QM
         /// 获取时间戳（秒）
         /// </summary>
         /// <returns></returns>
-        public static long GetUnixTimestamp()
+        public static long GetUtc8Timestamp()
         {
             // 获取当前的 UTC 时间
             DateTimeOffset utcNow = DateTimeOffset.UtcNow;
@@ -26,7 +26,7 @@ namespace QM
         /// 获取时间戳（毫秒）
         /// </summary>
         /// <returns></returns>
-        public static long GetUnixTimestampMilliseconds()
+        public static long GetUtc8TimestampMilliseconds()
         {
             // 获取当前的 UTC 时间
             DateTimeOffset utcNow = DateTimeOffset.UtcNow;
@@ -51,6 +51,16 @@ namespace QM
             // 返回该本地时间的 Unix 时间戳，以毫秒为单位
             return localNow.ToUnixTimeMilliseconds();
         }
+
+        public static long GetUnixTimestampMilliseconds()
+        {
+            // 获取当前的 UTC 时间
+            DateTimeOffset utcNow = DateTimeOffset.UtcNow;
+
+            // 返回该 UTC 时间的 Unix 时间戳，以毫秒为单位
+            return utcNow.ToUnixTimeMilliseconds();
+        }
+
     }
 
 }

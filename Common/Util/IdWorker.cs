@@ -115,7 +115,7 @@ namespace QM
         // 获取当前的时间戳
         protected virtual long TimeGen()
         {
-            return Time.GetLocalUnixTimestampMilliseconds();
+            return Time.GetUnixTimestampMilliseconds();
         }
     }
 }

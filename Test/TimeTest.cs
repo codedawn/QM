@@ -17,9 +17,9 @@ namespace Test
 
         private static void TestDate()
         {
-            Console.WriteLine(Time.ConvertUnixTimestampToDateTime(Time.GetUnixTimestampMilliseconds()));
+            Console.WriteLine(Time.ConvertUnixTimestampToDateTime(Time.GetUtc8TimestampMilliseconds()));
             Console.WriteLine(Time.ConvertUnixTimestampToDateTime(Time.GetLocalUnixTimestampMilliseconds()));
-            Debug.Assert(Time.GetUnixTimestampMilliseconds() / 1000 == Time.GetUnixTimestamp());
+            Debug.Assert(Time.GetUtc8TimestampMilliseconds() / 1000 == Time.GetUtc8Timestamp());
         }
     }
 }
