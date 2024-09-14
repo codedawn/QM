@@ -7,6 +7,6 @@ namespace DotNettyRPC
     public interface IRpcMessageOpcode
     {
         public Type GetType(short index);
-        public short? GetIndex(Type type);
+        public short GetIndex(Type type);
     }
 }

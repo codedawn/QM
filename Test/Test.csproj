@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DemoCommon\DemoCommon.csproj" />
+    <ProjectReference Include="..\Demo\Demo.csproj" />
     <ProjectReference Include="..\src\Src.csproj" />
   </ItemGroup>
 

@@ -21,27 +21,34 @@ namespace QM
                 var attribute = type.GetCustomAttribute(typeof(MessageIndexAttribute), false);
                 if (attribute != null && attribute is MessageIndexAttribute m)
                 {
-                    //不能出现两个相同的index
-                    if (!_messageOpcode.TryAdd(m.index, type))
-                    {
-                        throw new QMException(ErrorCode.MessageIndexDupli, $"不能定义两个相同的MessageIndex:{m.index} {type}");
-                    }
-                    _messageOpcodeReverse.Add(type, m.index);
+                    AddMessageIndex(m.index, type);
                 }
+            }
+        }
+
+        public void AddMessageIndex(short index, Type type)
+        {
+            //不能出现两个相同的index
+            if (!_messageOpcode.TryAdd(index, type) || !_messageOpcodeReverse.TryAdd(type, index))
+            {
+                throw new QMException(ErrorCode.MessageIndexDupli, $"不能定义两个相同的MessageIndex:{index} {type}");
             }
         }
 
         public Type GetType(short index)
         {
-            _messageOpcode.TryGetValue(index, out Type type);
+            if (!_messageOpcode.TryGetValue(index, out Type type))
+            {
+                throw new QMException(ErrorCode.MessageIndexNotFound, $"没有定义Type:{type}类型的MessageIndex");
+            }
             return type;
         }
 
-        public short? GetIndex(Type type)
+        public short GetIndex(Type type)
         {
             if (!_messageOpcodeReverse.TryGetValue(type, out short index))
             {
-                return null;
+                throw new QMException(ErrorCode.MessageIndexNotFound, $"没有定义Type:{type}类型的MessageIndex");
             }
             return index;
         }

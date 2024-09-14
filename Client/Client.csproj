@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\QMCommon.csproj" />
+    <ProjectReference Include="..\DemoCommon\DemoCommon.csproj" />
   </ItemGroup>
 
 

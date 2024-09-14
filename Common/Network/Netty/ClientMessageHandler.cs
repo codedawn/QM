@@ -29,5 +29,10 @@ namespace QM
                 throw new QMException(ErrorCode.MessageInvalid, "收到无效消息");
             }
         }
+
+        public void OnDisConnect()
+        {
+            _socketClient.OnDisConnect();
+        }
     }
 }

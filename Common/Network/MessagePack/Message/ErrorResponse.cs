@@ -17,5 +17,10 @@ namespace QM
         public int Code { get; set; }
         [Key(2)]
         public string Message { get; set; }
+
+        public override string ToString()
+        {
+            return $"{this.GetType()} Code:{Code} Message:{Message}";
+        }
     }
 }

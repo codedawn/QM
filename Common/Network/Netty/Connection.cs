@@ -8,6 +8,7 @@ namespace QM
 {
     public class Connection : IConnection
     {
+        private ILog _log = new NLogger(typeof(Connection));
         private readonly IChannel _channel;
         private readonly string _address;
         public string Address { get { return _address; } }
@@ -29,12 +30,6 @@ namespace QM
             this._cid = cid;
         }
 
-        public async Task Send(IMessage message)
-        {
-            if (!IsConnect()) return;
-            await _channel.WriteAndFlushAsync(message);
-        }
-
         public bool IsConnect()
         {
             return (_channel.Open && _channel.Active && _channel.IsWritable);
@@ -43,6 +38,26 @@ namespace QM
         public async Task Close()
         {
             await _channel.CloseAsync();
+        }
+
+        public async Task Send(IResponse response)
+        {
+            if (!IsConnect())
+            {
+                _log.Warn($"尝试给已经断开的连接发送消息Cid:{Cid}");
+                return;
+            }
+            await _channel.WriteAndFlushAsync(response);
+        }
+
+        public async Task Send(IPush push)
+        {
+            if (!IsConnect())
+            {
+                _log.Warn($"尝试给已经断开的连接发送消息Cid:{Cid}");
+                return;
+            }
+            await _channel.WriteAndFlushAsync(push);
         }
     }
 }

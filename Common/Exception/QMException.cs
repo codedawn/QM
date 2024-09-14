@@ -15,7 +15,7 @@ namespace QM
 
         public override string ToString()
         {
-            return $"ErrorCode:{_errorCode}({((int)_errorCode)}) Message:{Message} \n{StackTrace}";
+            return $"ErrorCode:{_errorCode}({((int)_errorCode)}) Message:{Message}";
         }
     }
 }

@@ -12,6 +12,7 @@ namespace QM
     {
         private Bootstrap _bootstrap;
         private Action<IPush> _onPush;
+        private Action _onDisConnect;
         private IChannel _channel;
         private int _timeout = 1000 * 60;
         private CommonAwait<IResponse> _messageAwait;
@@ -64,7 +65,7 @@ namespace QM
 
         public void OnPush(IPush push)
         {
-            _onPush?.Invoke(push);  
+            _onPush?.Invoke(push);
         }
 
         public void OnResponse(IResponse response)
@@ -73,9 +74,24 @@ namespace QM
             _messageAwait.Set(response.Id, response);
         }
 
+        public void OnDisConnect()
+        {
+            _onDisConnect?.Invoke();
+        }
+
         public void SetOnPushCallback(Action<IPush> action)
         {
             _onPush += action;
+        }
+
+        public void SetOnDisConnectCallback(Action action)
+        {
+            _onDisConnect += action;
+        }
+
+        public async Task CloseAsync()
+        {
+            await _channel.CloseAsync();
         }
 
         public string GetDetail()

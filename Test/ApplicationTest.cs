@@ -1,4 +1,5 @@
 ﻿using QM;
+using QM.Demo;
 using System.Diagnostics;
 
 namespace Test
@@ -30,6 +31,8 @@ namespace Test
             {
                 //Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
                 Application application = Application.CreateApplication("Connector01", Application.Connector, 20000, false);
+                application.LoadAssembly(["DemoCommon"]);
+                application.SetSessionFactory(new DemoSessionFactory());
                 application.Start();
             }
             catch (Exception ex)
@@ -54,7 +57,7 @@ namespace Test
 
                 Console.WriteLine(ex);
             }
-           
+
             Console.ReadLine();
         }
 

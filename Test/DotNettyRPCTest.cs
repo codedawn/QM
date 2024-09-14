@@ -13,7 +13,7 @@ namespace Test
         private static void Test1()
         {
             MessageOpcodeHelper.SetMessageOpcode(new RpcMessageOpcode());
-            object[] args = new object[2] { new UserRequest() { Name = "test" }, new NetSession() { sid = "123" } };
+            object[] args = new object[2] { new UserRequest() { Name = "test" }, new NetSession() { Sid = "123" } };
             RPCRequest requestModel = new RPCRequest
             {
                 ServiceName = "ServiceName",
@@ -30,5 +30,6 @@ namespace Test
             UserRequest user = (UserRequest)MessagePackUtil.Deserialize(type, userBytes);
             Console.WriteLine(user);
         }
+
     }
 }

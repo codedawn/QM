@@ -22,11 +22,17 @@ namespace QM
         MessageHandlerDupli,
 
         MessageIndexDupli,
+        MessageIndexNotFound,
+        MessageOpcodeNotFound,
 
         MessageInvalid,
 
         MessageNoDispather,
 
         ServerBootDupli,
+        ServerBootError,
+        ServerDupliResponse,
+        RPCNotAllowed,
+        SessionSyncError,
     }
 }

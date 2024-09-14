@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace QM
 {
-    public enum NetworkCode
+    [MessagePackObject]
+    public class SessionData
     {
-        Success = 200,
-        InternalError = 500,
-        MessageHandlerError = 510,
     }
 }

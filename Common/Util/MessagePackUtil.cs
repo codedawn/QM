@@ -1,7 +1,7 @@
 ﻿using MessagePack;
 using System;
 
-namespace DotNettyRPC
+namespace QM
 {
     public class MessagePackUtil
     {

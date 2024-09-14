@@ -9,13 +9,13 @@ namespace Test
         public static void Run()
         {
             //Test1();
-            DotNettyRPCTest();
+            //DotNettyRPCTest();
             DotNettyRPCTest1();
             Console.ReadLine();
         }
         private class InnerMessageOpcode : IRpcMessageOpcode
         {
-            public short? GetIndex(Type type)
+            public short GetIndex(Type type)
             {
                 return MessageOpcode.Instance.GetIndex(type);
             }
@@ -74,7 +74,7 @@ namespace Test
         {
             int threadCount = 1;
             int port = 40000;
-            int count = 10000;
+            int count = 1000000;
             int errorCount = 0;
             MessageOpcodeHelper.SetMessageOpcode(new InnerMessageOpcode());
             RPCServer rPCServer = new RPCServer(port);

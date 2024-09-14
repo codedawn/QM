@@ -66,12 +66,7 @@ namespace QM
 
         public void Encode(object msg, IByteBuffer output)
         {
-            short? index = MessageOpcode.Instance.GetIndex(msg.GetType());
-            if (index == null)
-            {
-                _log.Error($"无法找到对应消息类型为Type:{msg.GetType()}的index");
-                return;
-            }
+            short index = MessageOpcode.Instance.GetIndex(msg.GetType());
             byte[] bytes = Serialize(msg);
             output.WriteInt(bytes.Length + _indexLength);
             output.WriteShort((short)index);

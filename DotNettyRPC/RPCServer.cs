@@ -63,8 +63,9 @@ namespace DotNettyRPC
                     throw new QMException(ErrorCode.RPCNotFoundService, $"RPC调用未找到该服务{requestModel.ServiceName}");
                 }
                 //todo 可以做缓存
-                var serviceType = _serviceHandle[requestModel.ServiceName];
-                var service = Activator.CreateInstance(serviceType);
+                Type serviceType = _serviceHandle[requestModel.ServiceName];
+                object service = Activator.CreateInstance(serviceType);
+                //只能获取第一个方法，所以不能重名
                 var method = serviceType.GetMethod(requestModel.MethodName);
                 if (method == null)
                     throw new QMException(ErrorCode.RPCNotFoundMethod, $"RPC调用未找到该方法{requestModel.MethodName}");

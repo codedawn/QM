@@ -25,6 +25,7 @@ namespace DotNettyRPC
         private Bootstrap _bootstrap { get; }
         private CommonAwait<T> _rpcAwait { get; }
         private IChannel client;
+        private ILog _log = new NLogger(typeof(RPCClientProxy<T>));
 
         public RPCClientProxy(string serverIp, int port, Type serviceType, int timeout)
         {
@@ -88,6 +89,7 @@ namespace DotNettyRPC
             }
             catch (Exception ex)
             {
+                _log.Error(ex);
                 throw;
             }
         }

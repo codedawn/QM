@@ -25,11 +25,21 @@ namespace Test
             {
                 throw new NotImplementedException();
             }
+
+            public Task Send(IResponse response)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task Send(IPush push)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private async static void Test1()
         {
-            Session session = new Session("fweff", new TestConnection(), 321);
+            Session session = new Session("fweff", new TestConnection());
             await EventSystem.Instance.Publish(new SessionIdleEvent() { session = session, intervalTime = 3 });
         }
     }

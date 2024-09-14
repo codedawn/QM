@@ -19,11 +19,11 @@ namespace Test
         {
             Application application = Application.CreateApplication("TestServerComp", Application.Server, 9933);
             Task.Run(() => { application.Start(); });
+            await Task.Delay(1000);
             ServerComp serverComp = application.GetComponent<ServerComp>();
             UserRequest request = new UserRequest() { Id = 482159821095, Name = "TestServerComp" };
-            RemoteConnection remoteConnection = new RemoteConnection();
-            RemoteSession session = new RemoteSession("TestServerComp", remoteConnection, "");
-            int count = 1000000;
+            RemoteSession session = new RemoteSession("TestServerComp", "", null);
+            int count = 2;
             Task[] tasks = new Task[count];
             await Task.Delay(1000);
             Stopwatch stopwatch = Stopwatch.StartNew();

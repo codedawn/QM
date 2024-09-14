@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace QM
 {
@@ -25,6 +26,21 @@ namespace QM
         public async Task SendNotifyAsync(IMessage message)
         {
             await _socketClient.SendNotifyAsync(message);
+        }
+
+        public void SetOnPushCallback(Action<IPush> action)
+        {
+            _socketClient.SetOnPushCallback(action);
+        }
+
+        public void SetOnDisConnectCallback(Action action)
+        {
+            _socketClient.SetOnDisConnectCallback(action);
+        }
+
+        public Task CloseAsync()
+        {
+            return _socketClient.CloseAsync();
         }
     }
 }

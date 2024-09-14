@@ -6,18 +6,21 @@ namespace Test
     {
         public static void Main(string[] args)
         {
-            // QMProtocolTest.Run();
+            //QMProtocolTest.Run();
             ApplicationTest.Run();
             //RpcTest.Run();
             //ZookeeperServiceTest.Run();
             //EventSystemTest.Run();
             //Console.ReadLine();
             // AsyncHelperTest.Run();
-            // DotNettyRPCTest.Run();
+             //DotNettyRPCTest.Run();
             // NLogTest.Run();
             //QMExceptionTest.Run();
             //ServerCompTest.Run();
+           // MessagePackTest.Run();
+            //TimeTest.Run();
             Console.ReadLine();
         }
+
     }
 }
