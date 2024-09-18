@@ -9,15 +9,16 @@ namespace QM
     public class NLogger : ILog
     {
         private readonly NLog.Logger _logger;
-
-        static NLogger()
-        {
-            LogManager.Configuration = new XmlLoggingConfiguration("Log/NLog.config");
-
-        }
+        private bool _isFirst = true;
+        public static string ConfigPath = "Log/NLog.config";
 
         public NLogger(Type type)
         {
+            if (_isFirst)
+            {
+                LogManager.Configuration = new XmlLoggingConfiguration(ConfigPath);
+                _isFirst = false;
+            }
             _logger = LogManager.GetLogger(type.FullName);
         }
 

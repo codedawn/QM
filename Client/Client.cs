@@ -42,5 +42,10 @@ namespace QM
         {
             return _socketClient.CloseAsync();
         }
+
+        public static void SetNLogConfigPath(string path)
+        {
+            NLogger.ConfigPath = path;
+        }
     }
 }

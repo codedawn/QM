@@ -32,7 +32,7 @@ namespace QM.Demo
             this._session = session;
 
             _position = new Vector2(_random.Next(10), _random.Next(10));
-            _speed = _random.Next(5, 10);
+            _speed = _random.Next(5, 20);
         }
 
         public void Update(float dt)
