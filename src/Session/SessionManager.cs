@@ -9,6 +9,7 @@ namespace QM
 {
     public class SessionManager
     {
+        private ILog _log = new NLogger(typeof(SessionManager));
         private ConcurrentDictionary<string, ISession> _sessions = new ConcurrentDictionary<string, ISession>();
 
         /// <summary>
@@ -20,6 +21,7 @@ namespace QM
         {
             if (_sessions.TryGetValue(sid, out ISession exist))
             {
+                _log.Warn($"已经存在Session，进行覆盖，sid：{sid}");
                 _sessions.TryUpdate(sid, session, exist);
             }
             else

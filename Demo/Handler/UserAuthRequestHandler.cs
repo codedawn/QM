@@ -17,6 +17,7 @@ namespace QM.Demo
                 Application.current.TaskSchedule(async () => { await session.Close(); }, 1000);
                 return;
             }
+            session.Sid = request.Id.ToString();
             UserData userData = session.Data as UserData;
             if (userData != null)
             {

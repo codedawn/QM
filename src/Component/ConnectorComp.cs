@@ -98,6 +98,7 @@ namespace QM
                 await ConnectionClose(c);
             }
             _connectionManager.AddOrUpdate(connection.Address, connection);
+            //如果session已经存在不会创建新的
             ISession session = _sessionFactory.CreateSession(connection);
             _sessionComp.AddOrUpdate(session.Sid, session);
         }

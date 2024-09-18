@@ -32,6 +32,11 @@ namespace QM
             return _sessionManager.TryRemove(sid, out session);
         }
 
+        public void Remove(string sid)
+        {
+            _sessionManager.TryRemove(sid, out ISession session);
+        }
+
         public ISession Get(string sid)
         {
             return _sessionManager.Get(sid);

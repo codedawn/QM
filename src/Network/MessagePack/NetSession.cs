@@ -21,6 +21,8 @@ namespace QM
         public short DataIndex;
         [Key(3)]
         public object Data { get; set; }
+        [Key(4)]
+        public string TmpSid { get; set; }//待更新，新的sid
 
         public void OnBeforeSerialize()
         {

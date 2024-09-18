@@ -92,6 +92,7 @@ namespace QM
         public async Task SyncSessionToConnector(RemoteSession remoteSession)
         {
             NetSession netSession = _sessionFactory.CreateNetSession(remoteSession);
+            netSession.TmpSid = remoteSession.TmpSid;
             IPEndPoint iPEndPoint = _routeComp.GetConnector(remoteSession.ServerId);
             if (iPEndPoint == null)
             {
