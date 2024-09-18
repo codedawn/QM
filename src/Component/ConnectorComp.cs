@@ -136,7 +136,6 @@ namespace QM
             if (!_isMeasuring)
             {
                 _isMeasuring = true;
-                Interlocked.Exchange(ref _tmpCount, 1);
                 _startTime = Time.GetUtc8TimestampMilliseconds();
             }
             else
@@ -145,7 +144,8 @@ namespace QM
                 if (endTime - _startTime > 1000)
                 {
                     _isMeasuring = false;
-                    Console.WriteLine($"吞吐{_tmpCount}/sec");
+                    _startTime = endTime;
+                    Console.WriteLine($"总吞吐{_tmpCount} 打印/sec");
                 }
             }
         }
