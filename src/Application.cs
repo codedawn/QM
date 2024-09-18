@@ -29,6 +29,8 @@ namespace QM
         public readonly string serverType;
         public readonly int port;
         public readonly int rpcPort;
+        public readonly string zookeeperIp;
+        public readonly int zookeeperPort;
         public int maxConnectCount = 100000;
 
         private static Application _current;
@@ -42,14 +44,18 @@ namespace QM
             }
         }
 
-        private Application(string serverId, string serverType, int port)
+        private Application(string serverId, string serverType, int port, string zookeeperIp, int zookeeperPort, bool simpleDebug)
         {
             current = this;
             this.serverId = serverId;
             this.serverType = serverType;
             this.port = port;
             this.rpcPort = port + 1;
+            this.zookeeperIp = zookeeperIp;
+            this.zookeeperPort = zookeeperPort;
 
+
+            _simpleDebug = simpleDebug;
             _timer = new TaskTimer();
             _components = new List<IComponent>();
             isConnector = serverType == Connector;
@@ -80,14 +86,9 @@ namespace QM
             _Nlog.Error((Exception)e.ExceptionObject);
         }
 
-        private Application(string serverId, string serverType, int port, bool simpleDebug) : this(serverId, serverType, port)
+        public static Application CreateApplication(string serverId, string serverType, int port, string zookeeperIp = "127.0.0.1", int zookeeperPort = 2181, bool simpleDebug = false)
         {
-            this._simpleDebug = simpleDebug;
-        }
-
-        public static Application CreateApplication(string serverId, string serverType, int port, bool simpleDebug = false)
-        {
-            return new Application(serverId, serverType, port, simpleDebug);
+            return new Application(serverId, serverType, port, zookeeperIp, zookeeperPort, simpleDebug);
         }
 
         /// <summary>

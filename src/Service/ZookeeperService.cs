@@ -10,7 +10,6 @@ namespace QM
     public class ZookeeperService
     {
         private ILog _log = new ConsoleLogger();
-        private static readonly string _address = "127.0.0.1:2182";
         private static readonly string _servicePath = "/service";
 
         private static readonly int _sessionTimeout = 5000;
@@ -19,11 +18,12 @@ namespace QM
 
         public async Task StartAsync()
         {
+            string address = Application.current.zookeeperIp + ":" + Application.current.zookeeperPort; 
             if (_zookeeper != null)
             {
                 await _zookeeper.closeAsync();
             }
-            _zookeeper = new ZooKeeper(_address, _sessionTimeout, new MyWatcher(this));
+            _zookeeper = new ZooKeeper(address, _sessionTimeout, new MyWatcher(this));
             if (await _zookeeper.existsAsync(_servicePath, true) == null)
             {
                 await _zookeeper.createAsync(_servicePath, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);

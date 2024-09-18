@@ -30,7 +30,7 @@ namespace Test
             try
             {
                 //Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
-                Application application = Application.CreateApplication("Connector01", Application.Connector, 20000, false);
+                Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
                 application.LoadAssembly(["DemoCommon"]);
                 application.SetSessionFactory(new DemoSessionFactory());
                 application.Start();
@@ -49,7 +49,7 @@ namespace Test
             try
             {
                 //Application application = Application.CreateApplication("Server01", Application.Server, port);
-                Application application = Application.CreateApplication("Server01", Application.Server, port, isSimple);
+                Application application = Application.CreateApplication("Server01", Application.Server, port);
                 application.Start();
             }
             catch (Exception ex)
