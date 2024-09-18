@@ -42,6 +42,7 @@ namespace QM
         public List<Type> GetTypes(Type attrType)
         {
             types.TryGetValue(attrType, out var list);
+            if (list == null) return new List<Type> ();
             return list;
         }
 

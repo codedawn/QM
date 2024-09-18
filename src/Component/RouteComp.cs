@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace QM
 {
     public class RouteComp : Component
     {
+        private ILog _log = new NLogger(typeof(RouteComp));
         private readonly Application _application;
         private Dictionary<string, List<ServerInfo>> _serverTypes = new Dictionary<string, List<ServerInfo>>();
         private Dictionary<string, IRouter> _routers = new Dictionary<string, IRouter>();
@@ -18,6 +20,20 @@ namespace QM
         public RouteComp(Application application)
         {
             _application = application;
+            InitRoute();
+        }
+
+        private void InitRoute()
+        {
+            foreach (Type type in CodeType.Instance.GetTypes(typeof(RouteAttribute)))
+            {
+                IRouter router = Activator.CreateInstance(type) as IRouter;
+                RouteAttribute routeAttribute = type.GetCustomAttribute<RouteAttribute>(); 
+                if (!_routers.TryAdd(routeAttribute.serverType, router))
+                {
+                    _log.Error($"不能重复定义route，serverType:{routeAttribute.serverType}");
+                }
+            }
         }
 
         public IPEndPoint Route(string serverType)
