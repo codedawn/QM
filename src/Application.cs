@@ -69,6 +69,7 @@ namespace QM
             }
 #if DEBUG
             ResourceLeakDetector.Level = ResourceLeakDetector.DetectionLevel.Paranoid;
+            NLogger.logLevel = LogLevel.Debug;
 #endif
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

@@ -25,7 +25,7 @@ namespace DotNettyRPC
                     RPCRequest requestModel = MessagePackUtil.Deserialize<RPCRequest>(bytes);
                     RPCResponse response = await _rpcServer.GetResponse(requestModel);
                     byte[] sendMsg = MessagePackUtil.Serialize(response);
-                    await context.WriteAndFlushAsync(Unpooled.WrappedBuffer(sendMsg));
+                    context.WriteAndFlushAsync(Unpooled.WrappedBuffer(sendMsg));
                 }
                 finally
                 {

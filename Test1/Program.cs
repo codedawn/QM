@@ -4,11 +4,12 @@
     {
         public static void Main(string[] args)
         {
-            Task.Run(async () =>
-            {
-                await Task.Delay(2000);
-                ClientTest.Run();
-            });
+            //Task.Run(async () =>
+            //{
+            //    await Task.Delay(2000);
+            //    ClientTest.Run();
+            //});
+            ClientTest.Run();
             // QMProtocolTest.Run();
             //int port = 30000;
             //if (args.Length > 0 )

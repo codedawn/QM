@@ -10,13 +10,14 @@ namespace QM
     {
         private readonly NLog.Logger _logger;
         private bool _isFirst = true;
-        public static string ConfigPath = "Log/NLog.config";
+        public static string configPath = "Log/NLog.config";
+        public static LogLevel logLevel = LogLevel.Error;
 
         public NLogger(Type type)
         {
             if (_isFirst)
             {
-                LogManager.Configuration = new XmlLoggingConfiguration(ConfigPath);
+                LogManager.Configuration = new XmlLoggingConfiguration(configPath);
                 _isFirst = false;
             }
             _logger = LogManager.GetLogger(type.FullName);
@@ -24,27 +25,32 @@ namespace QM
 
         public void Debug(string message)
         {
-            _logger.Debug(message);
+            if (logLevel <= LogLevel.Debug)
+                _logger.Debug(message);
         }
 
         public void Error(string message)
         {
-            _logger.Error(message);
+            if (logLevel <= LogLevel.Error)
+                _logger.Error(message);
         }
 
         public void Error(Exception exception)
         {
-            _logger.Error(exception);
+            if (logLevel <= LogLevel.Error)
+                _logger.Error(exception);
         }
 
         public void Info(string message)
         {
-            _logger.Info(message);
+            if (logLevel <= LogLevel.Info)
+                _logger.Info(message);
         }
 
         public void Warn(string message)
         {
-            _logger.Warn(message);
+            if (logLevel <= LogLevel.Warn)
+                _logger.Warn(message);
         }
     }
 }

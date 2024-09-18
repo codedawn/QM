@@ -12,27 +12,30 @@ namespace Test1
     {
         public static void Run()
         {
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 20; i++)
             {
                 Task.Run(() =>
                 {
-                    Test1(i);
+                    Test1();
                 });
             }
             //Test1();
         }
 
-        private async static void Test1(int id)
+        private async static void Test1()
         {
             Client client = new Client();
             await client.ConnectAsync("127.0.0.1", 20000);
             Stopwatch stopwatch = Stopwatch.StartNew();
-            for (int i = id; i < 2 + id; i++)
+            int count = 1000;
+            Task[] tasks = new Task[count];
+            for (int i = 0; i < count; i++)
             {
-                UserResponse userResponse = (UserResponse)await client.SendRequestAsync(new UserRequest() { Id = i, Name = "lirewi", Email = "rewr" });
+                tasks[i] = client.SendRequestAsync(new UserJoinRequest() { Id = IdGenerator.NextId(), UserId = IdGenerator.NextId()});
             }
+            await Task.WhenAll(tasks);
             stopwatch.Stop();
-            Console.WriteLine($"{id}ClientTest 成功 {stopwatch.ElapsedMilliseconds}ms");
+            Console.WriteLine($"ClientTest 成功,耗时：{stopwatch.ElapsedMilliseconds}ms 平均{stopwatch.ElapsedMilliseconds/count}ms");
         }
     }
 }

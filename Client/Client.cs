@@ -45,7 +45,7 @@ namespace QM
 
         public static void SetNLogConfigPath(string path)
         {
-            NLogger.ConfigPath = path;
+            NLogger.configPath = path;
         }
     }
 }
