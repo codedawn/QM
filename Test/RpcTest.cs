@@ -65,7 +65,7 @@ namespace Test
             }
             Task.WaitAll(tasks.ToArray());
             watch.Stop();
-            Console.WriteLine($"并发数:{threadCount},运行:{count}次,每次耗时:{(double)watch.ElapsedMilliseconds / count}ms");
+            Console.WriteLine($"并发数:{threadCount},耗时：{watch.ElapsedMilliseconds}ms 运行:{count}次,每次耗时:{(double)watch.ElapsedMilliseconds / count}ms");
             Console.WriteLine($"错误次数：{errorCount}");
             Console.ReadLine();
         }
@@ -74,7 +74,7 @@ namespace Test
         {
             int threadCount = 1;
             int port = 40000;
-            int count = 1000000;
+            int count = 500000;
             int errorCount = 0;
             MessageOpcodeHelper.SetMessageOpcode(new InnerMessageOpcode());
             RPCServer rPCServer = new RPCServer(port);
@@ -102,7 +102,7 @@ namespace Test
             }
             Task.WaitAll(tasks.ToArray());
             watch.Stop();
-            Console.WriteLine($"并发数:{threadCount},运行:{count}次,每次耗时:{(double)watch.ElapsedMilliseconds / count}ms");
+            Console.WriteLine($"并发数:{threadCount}, 耗时：{watch.ElapsedMilliseconds}ms  运行:{count}次,每次耗时:{(double)watch.ElapsedMilliseconds / count}ms");
             Console.WriteLine($"错误次数：{errorCount}");
             Console.ReadLine();
         }

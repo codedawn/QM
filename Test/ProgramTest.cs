@@ -7,8 +7,8 @@ namespace Test
         public static void Main(string[] args)
         {
             //QMProtocolTest.Run();
-            ApplicationTest.Run();
-            //RpcTest.Run();
+            //ApplicationTest.Run();
+            RpcTest.Run();
             //ZookeeperServiceTest.Run();
             //EventSystemTest.Run();
             //Console.ReadLine();

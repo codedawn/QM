@@ -26,11 +26,17 @@ namespace QM
 
         public void OnBeforeSerialize()
         {
+            if (Data == null)
+            {
+                DataIndex = -1;
+                return;
+            }
             DataIndex = MessageOpcode.Instance.GetIndex(Data.GetType());
         }
 
         public void OnAfterDeserialize()
         {
+            if (DataIndex == -1) { return; }
             Type type = MessageOpcode.Instance.GetType(DataIndex);
             byte[] bytes = MessagePackUtil.Serialize(Data);
             Data = MessagePackUtil.Deserialize(type, bytes);
