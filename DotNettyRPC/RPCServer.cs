@@ -86,7 +86,7 @@ namespace DotNettyRPC
                     if (resultProperty != null)
                     {
                         res = resultProperty.GetValue(task);
-                        if (res.GetType() == voidTaskResultType)
+                        if (res != null && res.GetType() == voidTaskResultType)
                         {
                             res = null;
                         }
@@ -95,7 +95,7 @@ namespace DotNettyRPC
                     {
                         res = null;
                     }
-                    
+
                 }
 
                 response.Success = true;

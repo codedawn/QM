@@ -1,7 +1,8 @@
-﻿using System;
+﻿using QM;
+using System;
 using System.Threading.Tasks;
 
-namespace QM
+namespace Test
 {
     [MessageHandler]
     public class UserMessageHandler : MessageHandler<UserRequest, UserResponse>

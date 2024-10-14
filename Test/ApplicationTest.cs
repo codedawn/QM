@@ -20,19 +20,12 @@ namespace Test
 
         public static void TestConnector()
         {
-            //Task.Run(() =>
-            //{
-            //    Task.Delay(1500).Wait();
-            //    SocketClient socketClient = new SocketClient();
-            //    socketClient.Init();
-            //});
-
             try
             {
                 //Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
                 Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
-                application.LoadAssembly(["DemoCommon"]);
-                application.SetSessionFactory(new DemoSessionFactory());
+                //application.LoadAssembly(["DemoCommon"]);
+                //application.SetSessionFactory(new DemoSessionFactory());
                 application.Start();
             }
             catch (Exception ex)
@@ -46,6 +39,11 @@ namespace Test
 
         public static void TestServer(int port, bool isSimple)
         {
+            Task.Run(() =>
+            {
+                Task.Delay(1500).Wait();
+                TestClient();
+            });
             try
             {
                 //Application application = Application.CreateApplication("Server01", Application.Server, port);
@@ -68,11 +66,15 @@ namespace Test
             socketClient.SetOnPushCallback(push => { Console.WriteLine("TestClient:" + push); });
 
             await socketClient.ConnectAsync("127.0.0.1", 20000);
+            //UserAuthRequest userAuthRequest = new UserAuthRequest() { Id = IdGenerator.NextId(), Token = "test" };
+            //var response = await socketClient.SendRequestAsync(userAuthRequest);
             UserRequest request = new UserRequest() { Id = 234214, Name = "TestClient" };
             UserResponse userResponse = (UserResponse)await socketClient.SendRequestAsync(request);
             Debug.Assert(userResponse.Id == request.Id);
             Debug.Assert(userResponse.Name == request.Name);
 
+            UserNotify userNotify = new UserNotify() { message = "一条聊天消息" };
+            await socketClient.SendNotifyAsync(userNotify);
             Console.ReadLine();
         }
     }

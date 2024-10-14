@@ -9,14 +9,14 @@
             //    await Task.Delay(2000);
             //    ClientTest.Run();
             //});
-            ClientTest.Run();
+            //ClientTest.Run();
             // QMProtocolTest.Run();
             //int port = 30000;
             //if (args.Length > 0 )
             //{
             //    port = int.Parse( args[0] );
             //}
-            //ApplicationTest1.Run(port);
+            ApplicationTest1.Run(30000);
             // RpcTest.Run();
             //ZookeeperServiceTest.Run();
             //EventSystemTest.Run();

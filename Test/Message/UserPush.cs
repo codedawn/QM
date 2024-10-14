@@ -1,8 +1,7 @@
-﻿
+﻿using MessagePack;
+using QM;
 
-using MessagePack;
-
-namespace QM
+namespace Test
 {
     [MessageIndex(5)]
     [MessagePackObject]

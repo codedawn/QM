@@ -1,11 +1,10 @@
 ﻿
-using System;
-using System.Threading.Tasks;
+using QM;
 
-namespace QM
+namespace Test
 {
     [EventHandler]
-    public class SessionIdleEventHandler : EventHandler<SessionIdleEvent>
+    public class SessionIdleEventHandler : QM.EventHandler<SessionIdleEvent>
     {
         public override Task Run(SessionIdleEvent e)
         {

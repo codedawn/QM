@@ -1,4 +1,6 @@
-﻿namespace QM
+﻿using QM;
+
+namespace Test
 {
     public struct SessionIdleEvent : IEvent
     {

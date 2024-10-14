@@ -1,6 +1,7 @@
 ﻿using MessagePack;
+using QM;
 
-namespace QM
+namespace Test
 {
     [MessageDispatch(ServerType.Server)]
     [MessageIndex(1)]

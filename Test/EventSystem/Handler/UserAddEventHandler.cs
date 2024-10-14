@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using QM;
 
-namespace QM
+namespace Test
 {
     [EventHandler]
-    public class UserAddEventHandler : EventHandler<UserAddEvent>
+    public class UserAddEventHandler : QM.EventHandler<UserAddEvent>
     {
         public override async Task Run(UserAddEvent e)
         {

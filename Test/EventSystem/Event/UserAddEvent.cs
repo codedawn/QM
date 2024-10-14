@@ -1,10 +1,11 @@
-﻿using System;
+﻿using QM;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QM
+namespace Test
 {
     public class UserAddEvent : IEvent
     {
