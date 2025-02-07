@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="DotNetty.Codecs" Version="0.7.6" />
     <PackageReference Include="DotNetty.Handlers" Version="0.7.6" />
-    <PackageReference Include="MessagePack" Version="2.5.172" />
+    <PackageReference Include="MessagePack" Version="2.5.187" />
     <PackageReference Include="NLog" Version="5.3.3" />
   </ItemGroup>
 

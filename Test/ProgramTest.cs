@@ -21,8 +21,9 @@ namespace Test
             // MessagePackTest.Run();
             //TimeTest.Run();
             // IdWorkerTest.Run();
-           // ECSTest.Run();
-            Console.ReadLine();
+            // ECSTest.Run();
+
+            while (true) { }
         }
 
     }

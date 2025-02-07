@@ -34,7 +34,7 @@ namespace Test
                 Console.WriteLine(ex);
             }
 
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
         public static void TestServer(int port, bool isSimple)

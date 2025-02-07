@@ -180,11 +180,12 @@ namespace QM
 
         private void StartLoop()
         {
-            Console.ReadLine();
-            //while (true)
-            //{
-            //    Thread.Sleep(1);
-            //}
+            Console.WriteLine("输入stop退出");
+            while ("stop" != Console.ReadLine())
+            {
+                Thread.Sleep(1);
+            }
+            Stop();
         }
 
         public void Stop()
