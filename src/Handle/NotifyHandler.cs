@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QM
 {
-    public abstract class NotifyHandler<NotifyMessage> : IMHandler
+    public abstract class NotifyHandler<NotifyMessage> : IMHandler where NotifyMessage : INotify
     {
         private ILog _Log = new NLogger(typeof(NotifyHandler<NotifyMessage>));
         public Type GetMessageType()
