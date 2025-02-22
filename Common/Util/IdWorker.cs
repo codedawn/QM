@@ -66,8 +66,8 @@ namespace QM
             _sequence = sequence;
         }
 
-        readonly object _lock = new Object();
-        public virtual long NextId()
+        private readonly object _lock = new Object();
+        public long NextId()
         {
             lock (_lock)
             {

@@ -15,6 +15,7 @@ namespace QM.Demo
             application.AddComponent(new RoomComp());
             application.SetSessionFactory(new DemoSessionFactory());
             application.Start();
+            UserAuthRequest userAuthRequest = new UserAuthRequest();
             UserJoinRequest request = new UserJoinRequest();
             //for (int i = 1; i <= 5; i++)
             //{

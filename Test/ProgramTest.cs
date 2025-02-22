@@ -20,7 +20,7 @@ namespace Test
             //ServerCompTest.Run();
             // MessagePackTest.Run();
             //TimeTest.Run();
-            // IdWorkerTest.Run();
+            //IdWorkerTest.Run();
             // ECSTest.Run();
 
             while (true) { }

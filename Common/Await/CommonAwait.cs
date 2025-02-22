@@ -10,7 +10,7 @@ namespace QM
     public class CommonAwait<T> : IAwait<T>
     {
 #if DEBUG
-        private ConcurrentDictionary<long, Stopwatch> timeMeasurements = new ConcurrentDictionary<long, Stopwatch>();
+        private ConcurrentDictionary<long, long> timeMeasurements = new ConcurrentDictionary<long, long>();
 #endif
         private int _timeout;
         private ConcurrentDictionary<long, TaskCompletionSource<T>> _waits { get; set; } = new ConcurrentDictionary<long, TaskCompletionSource<T>>();
@@ -28,7 +28,7 @@ namespace QM
         public Task<T> Start(long id)
         {
 #if DEBUG
-            timeMeasurements.TryAdd(id, Stopwatch.StartNew());
+            timeMeasurements.TryAdd(id, Time.GetUnixTimestampMilliseconds());
 #endif
             _taskTimer.schedule(() => Timeout(id), _timeout);
             TaskCompletionSource<T> tcs = new TaskCompletionSource<T>();
@@ -51,10 +51,9 @@ namespace QM
         public void Set(long id, T result)
         {
 #if DEBUG
-            if (timeMeasurements.TryGetValue(id, out Stopwatch stopwatch))
+            if (timeMeasurements.TryGetValue(id, out long startTime))
             {
-                stopwatch.Stop();
-                _log.Debug($"{_name}id:{id}到达耗时：{stopwatch.ElapsedMilliseconds}ms");
+                _log.Debug($"{_name}id:{id}到达耗时：{Time.GetUnixTimestampMilliseconds() - startTime}ms");
             }
              
 #endif

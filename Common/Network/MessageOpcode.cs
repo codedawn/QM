@@ -39,7 +39,7 @@ namespace QM
         {
             if (!_messageOpcode.TryGetValue(index, out Type type))
             {
-                throw new QMException(ErrorCode.MessageIndexNotFound, $"没有定义Type:{type}类型的MessageIndex");
+                throw new QMException(ErrorCode.MessageIndexNotFound, $"没有找到MessageIndex:{index}对应的Type");
             }
             return type;
         }

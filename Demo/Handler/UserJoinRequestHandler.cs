@@ -11,7 +11,7 @@ namespace QM.Demo
     {
         protected override Task Run(UserJoinRequest request, UserJoinResponse response, ISession session)
         {
-            Application.current.GetComponent<RoomComp>().JoinRoom(request.Id, session);
+            Application.current.GetComponent<RoomComp>().JoinRoom(request.UserId, session);
             return Task.CompletedTask;
         }
     }

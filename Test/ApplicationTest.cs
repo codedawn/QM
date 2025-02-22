@@ -24,8 +24,8 @@ namespace Test
             {
                 //Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
                 Application application = Application.CreateApplication("Connector01", Application.Connector, 20000);
-                //application.LoadAssembly(["DemoCommon"]);
-                //application.SetSessionFactory(new DemoSessionFactory());
+                application.LoadAssembly(["DemoCommon"]);
+                application.SetSessionFactory(new DemoSessionFactory());
                 application.Start();
             }
             catch (Exception ex)
